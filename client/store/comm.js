@@ -1,0 +1,124 @@
+import axios from "axios";
+
+const SET_COMM = "SET_COMM";
+const RESET_COMM = "RESET_COMM";
+const ADD_COMM = "ADD_COMM";
+const DELETE_FRIEND_COMM = "DELETE_FRIEND_COMM";
+
+export const setComm = (comm) => {
+  return {
+    type: SET_COMM,
+    comm,
+  };
+};
+
+export const resetComm = () => {
+  return {
+    type: SET_COMM,
+    comm: [],
+  };
+};
+
+export const addComm = (comm) => {
+  return {
+    type: ADD_COMM,
+    comm,
+  };
+};
+
+export const deleteFriendComm = (friendId) => {
+  return {
+    type: DELETE_FRIEND_COMM,
+    friendId,
+  };
+};
+
+export const _fetchComm = () => {
+  return async (dispatch) => {
+    try {
+      const token = await deviceState.getJWT();
+
+      if (token) {
+        const { data } = await axios.get(
+          `http://192.168.86.32:8080/api/communications/`,
+          {
+            headers: {
+              authorization: token,
+            },
+          }
+        );
+
+        if (data.length) {
+          const communications = data.map((comm) => {
+            let start = new Date(comm.start);
+            let end = new Date(comm.end);
+            comm.start = start;
+            comm.end = end;
+            comm.imageUrl = comm.friend.imageUrl;
+            return comm;
+          });
+          dispatch(setComm(communications));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const _createRecurringComm = (comm, friendId, imageUrl) => {
+  return async (dispatch) => {
+    try {
+      console.log(imageUrl);
+      const token = await deviceState.getJWT();
+
+      if (token) {
+        const { data } = await axios.post(
+          `http://192.168.86.32:8080/api/communications/recurring/${friendId}`,
+          comm,
+          {
+            headers: {
+              authorization: token,
+            },
+          }
+        );
+
+        if (data.newComm.length) {
+          const recurringComm = data.newComm.map((comm) => {
+            let start = new Date(comm.start);
+            let end = new Date(comm.end);
+            comm.start = start;
+            comm.end = end;
+            comm.imageUrl = imageUrl;
+            return comm;
+          });
+          dispatch(addComm(recurringComm));
+        }
+      }
+    } catch (error) {
+      console.log("_Create Communication Error: " + error);
+    }
+  };
+};
+
+export default (state = [], action) => {
+  switch (action.type) {
+    case SET_COMM:
+      return action.comm;
+    case RESET_COMM:
+      return action.comm;
+    case ADD_COMM:
+      return [...action.comm, ...state];
+    case DELETE_FRIEND_COMM:
+      let deletedStateCopy = [...state];
+      if (deletedStateCopy.length) {
+        deletedStateCopy = deletedStateCopy.filter(
+          (item) => item.friendId !== action.friendId
+        );
+      }
+      return deletedStateCopy;
+
+    default:
+      return state;
+  }
+};
