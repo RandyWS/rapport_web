@@ -1,4 +1,6 @@
 import axios from "axios";
+const TOKEN = "token";
+const token = window.localStorage.getItem(TOKEN);
 
 const SET_COMM = "SET_COMM";
 const RESET_COMM = "RESET_COMM";
@@ -33,28 +35,20 @@ export const deleteFriendComm = (friendId) => {
   };
 };
 
-export const _fetchComm = () => {
+export const _fetchComms = () => {
   return async (dispatch) => {
     try {
-      const token = await deviceState.getJWT();
-
       if (token) {
-        const { data } = await axios.get(
-          `http://192.168.86.32:8080/api/communications/`,
-          {
-            headers: {
-              authorization: token,
-            },
-          }
-        );
+        const { data } = await axios.get(`/api/comms`, {
+          headers: {
+            authorization: token,
+          },
+        });
 
         if (data.length) {
           const communications = data.map((comm) => {
-            let start = new Date(comm.start);
-            let end = new Date(comm.end);
-            comm.start = start;
-            comm.end = end;
-            comm.imageUrl = comm.friend.imageUrl;
+            comm.url = comm.friend.imageUrl;
+            comm.id = comm.friendId;
             return comm;
           });
           dispatch(setComm(communications));

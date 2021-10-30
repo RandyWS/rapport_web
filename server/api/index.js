@@ -2,7 +2,7 @@ const router = require("express").Router();
 module.exports = router;
 
 router.use("/users", require("./users"));
-router.use("/communications", require("./communications"));
+router.use("/comms", require("./comms"));
 router.use("/friends", require("./friends"));
 
 router.use((req, res, next) => {

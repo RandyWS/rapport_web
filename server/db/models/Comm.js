@@ -35,14 +35,14 @@ const Communication = db.define("communication", {
     type: Sequelize.DATE,
     allowNull: false,
     get() {
-      return moment(this.getDataValue("start")).format("llll");
+      return moment(this.getDataValue("start")).format("YYYY-MM-DD hh:mm");
     },
   },
   end: {
     type: Sequelize.DATE,
     allowNull: false,
     get() {
-      return moment(this.getDataValue("end")).format("llll");
+      return moment(this.getDataValue("end")).format("YYYY-MM-DD hh:mm");
     },
   },
   is_recurring: {

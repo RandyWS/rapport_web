@@ -3,6 +3,7 @@ const {
   db,
   models: { User, Friend, Communication, Recurring_Pattern, Recurring_Type },
 } = require("../server/db");
+const moment = require("moment");
 const { green, red } = require("chalk");
 
 const users = [
@@ -350,9 +351,8 @@ const randyCommunications = [
   {
     title: "Friends for days",
     date: "2021-10-08",
-
-    start: new Date(2021, 9, 8, 4, 5),
-    end: new Date(2021, 9, 8, 4, 20),
+    start: moment(new Date(2021, 9, 8, 4, 5)).format("YYYY/MM/DD hh:mm"),
+    end: moment(new Date(2021, 9, 8, 4, 20)).format("YYYY/MM/DD hh:mm"),
     content:
       "the function renderEvent must return a ReactElement. The component should be wrapped inside a TouchableOpacity or any DOM element which accepts positioning and click events (onPress, ...)",
     type: "text",

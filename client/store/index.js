@@ -5,7 +5,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import auth from "./auth";
 import user from "./user";
 import friends from "./friends";
-import comm from "./comm";
+import comms from "./comms";
 import singleComm from "./singleComm";
 import singleFriend from "./singleFriend";
 
@@ -13,7 +13,7 @@ const reducer = combineReducers({
   auth,
   user,
   friends,
-  comm,
+  comms,
   singleFriend,
   singleComm,
 });
@@ -28,4 +28,4 @@ export * from "./user";
 export * from "./friends";
 export * from "./singleFriend";
 export * from "./singleComm";
-export * from "./comm";
+export * from "./comms";

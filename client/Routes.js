@@ -1,8 +1,18 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter, Route, Switch, Redirect } from "react-router-dom";
+import {
+  LoggedInRoute,
+  AdminRoute,
+  GuestRoute,
+} from "./components/ProtectedRoutes";
 import { Login, Signup } from "./components/AuthForm";
 import Home from "./components/Home";
+import NotFound from "./components/NotFound";
+import Calendar from "./components/Calendar";
+import Landing from "./components/Landing";
+import FriendsList from "./components/FriendsList";
+import SingleFriend from "./components/SingleFriend";
 import { me } from "./store";
 
 /**
@@ -10,26 +20,58 @@ import { me } from "./store";
  */
 const Routes = () => {
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
+  const { loggedIn } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(me());
   }, []);
 
+  if (loggedIn === undefined) {
+    return null;
+  }
+
   return (
     <div>
-      {!!auth.id ? (
-        <Switch>
-          <Route path="/home" component={Home} />
-          <Redirect to="/home" />
-        </Switch>
-      ) : (
-        <Switch>
-          <Route path="/" exact component={Login} />
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-        </Switch>
-      )}
+      <Switch>
+        <Route exact path="/" component={Landing} />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/home"
+          component={Home}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/calendar"
+          component={Calendar}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/friends"
+          component={FriendsList}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/friends/:friendId"
+          component={SingleFriend}
+        />
+        <GuestRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/login"
+          component={Login}
+        />
+        <GuestRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/signup"
+          component={Signup}
+        />
+        <Route path="*" component={NotFound}></Route>
+      </Switch>
     </div>
   );
 };

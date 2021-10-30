@@ -1,8 +1,10 @@
-const router = require('express').Router();
-const Sequelize = require('sequelize');
-const {User, Communication, Friend, Recurring_Pattern} = require('../db');
-const jwt = require('jsonwebtoken');
-const moment = require('moment');
+const router = require("express").Router();
+const Sequelize = require("sequelize");
+const {
+  models: { User, Communication, Friend, Recurring_Pattern },
+} = require("../db");
+const jwt = require("jsonwebtoken");
+const moment = require("moment");
 module.exports = router;
 
 const secret = process.env.JWT;
@@ -11,33 +13,40 @@ const authRequired = async (req, res, next) => {
   const token = req.headers.authorization;
 
   try {
-    const {id} = await jwt.verify(token, secret);
+    const { id } = await jwt.verify(token, secret);
     req.userId = id;
   } catch (error) {
     res.status(401).send({
       loggedIn: false,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
     return;
   }
   next();
 };
 
-router.get('/', authRequired, async (req, res, next) => {
+router.get("/", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const comm = await Communication.findAll({
         where: {
           userId: req.userId,
         },
-        order: [['start', 'ASC']],
+        order: [["start", "ASC"]],
         include: {
           model: Friend,
         },
       });
 
       if (comm.length) {
-        res.status(200).json(comm);
+        const formattedComms = comm.map((comm) => {
+          const start = moment(comm.start).format("YYYY-MM-DD hh:mm");
+          const end = moment(comm.end).format("YYYY-MM-DD hh:mm");
+
+          return comm;
+        });
+
+        res.status(200).json(formattedComms);
       }
     }
   } catch (error) {
@@ -45,7 +54,7 @@ router.get('/', authRequired, async (req, res, next) => {
   }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+router.post("/", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const newCommunication = await Communication.create({
@@ -63,7 +72,7 @@ router.post('/', authRequired, async (req, res, next) => {
   }
 });
 
-router.post('/recurring/:friendId', authRequired, async (req, res, next) => {
+router.post("/recurring/:friendId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       // gets the next closest date
@@ -72,32 +81,32 @@ router.post('/recurring/:friendId', authRequired, async (req, res, next) => {
         if (moment().isoWeekday() <= x) {
           return moment(now).isoWeekday(x);
         } else {
-          return moment(now).add(1, 'weeks').isoWeekday(x);
+          return moment(now).add(1, "weeks").isoWeekday(x);
         }
       }
 
       const startDate = nextDay(req.body.weekDay);
 
       let firstDay = startDate.clone();
-      let lastDay = startDate.clone().add(1, 'years');
+      let lastDay = startDate.clone().add(1, "years");
 
-      let interval = '';
+      let interval = "";
       let separation_count = 0;
       let count = 1;
       let recurringType = 1;
-      if (req.body.frequency === 'daily') {
-        interval = 'days';
+      if (req.body.frequency === "daily") {
+        interval = "days";
         recurringType = 1;
-      } else if (req.body.frequency === 'weekly') {
-        interval = 'weeks';
+      } else if (req.body.frequency === "weekly") {
+        interval = "weeks";
         recurringType = 2;
-      } else if (req.body.frequency === 'bi-weekly') {
-        interval = 'weeks';
+      } else if (req.body.frequency === "bi-weekly") {
+        interval = "weeks";
         count = 2;
         recurringType = 2;
         separation_count = 1;
       } else {
-        interval = 'weeks';
+        interval = "weeks";
         recurringType = 3;
         count = 4;
       }
@@ -114,14 +123,14 @@ router.post('/recurring/:friendId', authRequired, async (req, res, next) => {
           friendId: req.params.friendId,
           is_recurring: true,
           title: `${req.body.friend}`,
-          type: 'future',
+          type: "future",
           start: i.clone(),
-          end: i.clone().add(1, 'hours'),
+          end: i.clone().add(1, "hours"),
         });
       }
 
       const newComm = await Promise.all(
-        recurringEvents.map(async contact => {
+        recurringEvents.map(async (contact) => {
           let comm = await Communication.create(contact);
           await Recurring_Pattern.create({
             commId: comm.id,
@@ -130,7 +139,7 @@ router.post('/recurring/:friendId', authRequired, async (req, res, next) => {
             separation_count,
           });
           return comm;
-        }),
+        })
       );
 
       res.status(200).send({
@@ -142,7 +151,7 @@ router.post('/recurring/:friendId', authRequired, async (req, res, next) => {
   }
 });
 
-router.get('/:commId', authRequired, async (req, res, next) => {
+router.get("/:commId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const comm = await Communication.findOne({
@@ -161,11 +170,11 @@ router.get('/:commId', authRequired, async (req, res, next) => {
   }
 });
 
-router.delete('/:commId', authRequired, async (req, res, next) => {
+router.delete("/:commId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const deleteCount = await Communication.destroy({
-        where: {userId: req.userId, id: req.params.commId},
+        where: { userId: req.userId, id: req.params.commId },
       });
       res.status(200).json(deleteCount);
     }
