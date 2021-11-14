@@ -1,10 +1,11 @@
-import axios from 'axios';
-import {editFriend, deleteFriend, deleteFriendComm} from './index';
+import axios from "axios";
+import { editFriend, deleteFriend, deleteFriendComm } from "./index";
 
-const SET_SINGLE_FRIEND = 'SET_SINGLE_FRIEND';
-const RESET_SINGLE_FRIEND = 'RESET_SINGLE_FRIEND';
+const TOKEN = "token";
+const SET_SINGLE_FRIEND = "SET_SINGLE_FRIEND";
+const RESET_SINGLE_FRIEND = "RESET_SINGLE_FRIEND";
 
-export const setSingleFriend = singleFriend => {
+export const setSingleFriend = (singleFriend) => {
   return {
     type: SET_SINGLE_FRIEND,
     singleFriend,
@@ -18,20 +19,17 @@ export const resetSingleFriend = () => {
   };
 };
 
-export const _fetchSingleFriend = friendId => {
-  return async dispatch => {
+export const _fetchSingleFriend = (friendId) => {
+  return async (dispatch) => {
     try {
-      const token = await deviceState.getJWT();
+      const token = window.localStorage.getItem(TOKEN);
 
       if (token) {
-        const {data} = await axios.get(
-          `http://192.168.86.32:8080/api/friends/${friendId}`,
-          {
-            headers: {
-              authorization: token,
-            },
+        const { data } = await axios.get(`/api/friends/${friendId}`, {
+          headers: {
+            authorization: token,
           },
-        );
+        });
 
         if (data.id) {
           dispatch(setSingleFriend(data));
@@ -44,20 +42,16 @@ export const _fetchSingleFriend = friendId => {
 };
 
 export const _editFriend = (friend, friendId) => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
-      const token = await deviceState.getJWT();
-      console.log(friend, friendId);
+      const token = window.localStorage.getItem(TOKEN);
+
       if (token) {
-        const {data} = await axios.put(
-          `http://192.168.86.32:8080/api/friends/${friendId}`,
-          friend,
-          {
-            headers: {
-              authorization: token,
-            },
+        const { data } = await axios.put(`/api/friends/${friendId}`, friend, {
+          headers: {
+            authorization: token,
           },
-        );
+        });
 
         if (data.id) {
           dispatch(setSingleFriend(data));
@@ -70,20 +64,20 @@ export const _editFriend = (friend, friendId) => {
   };
 };
 
-export const _deleteFriend = (friendId, navigation) => {
-  return async dispatch => {
+export const _deleteFriend = (friendId) => {
+  return async (dispatch) => {
     try {
-      const token = await deviceState.getJWT();
+      const token = window.localStorage.getItem(TOKEN);
 
       if (token) {
-        const {data} = await axios.delete(
-          `http://192.168.86.32:8080/api/friends/${friendId}`,
+        const { data } = await axios.delete(
+          `/api/friends/${friendId}`,
 
           {
             headers: {
               authorization: token,
             },
-          },
+          }
         );
 
         if (data) {

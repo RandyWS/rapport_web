@@ -56,9 +56,15 @@ function Navbar() {
             <Link to="/home" className={classes.link}>
               Home
             </Link>
-            <a href="#" className={classes.navlinks} onClick={handleClick}>
+            <Link to="/calendar" className={classes.link}>
+              Calendar
+            </Link>
+            <Link to="/friends" className={classes.link}>
+              Friends
+            </Link>
+            <Link to="/" className={classes.link} onClick={handleClick}>
               Logout
-            </a>
+            </Link>
           </div>
         ) : (
           <div className={classes.navlinks}>

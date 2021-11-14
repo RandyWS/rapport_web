@@ -1,6 +1,8 @@
-const router = require('express').Router();
-const {User, Communication, Friend} = require('../db');
-const jwt = require('jsonwebtoken');
+const router = require("express").Router();
+const {
+  models: { User, Communication, Friend },
+} = require("../db");
+const jwt = require("jsonwebtoken");
 module.exports = router;
 
 const secret = process.env.JWT;
@@ -9,19 +11,19 @@ const authRequired = async (req, res, next) => {
   const token = req.headers.authorization;
 
   try {
-    const {id} = await jwt.verify(token, secret);
+    const { id } = await jwt.verify(token, secret);
     req.userId = id;
   } catch (error) {
     res.status(401).send({
       loggedIn: false,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
     return;
   }
   next();
 };
 
-router.get('/', authRequired, async (req, res, next) => {
+router.get("/", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const friends = await Friend.findAll({
@@ -31,7 +33,7 @@ router.get('/', authRequired, async (req, res, next) => {
         include: [
           {
             model: Communication,
-            order: ['date'],
+            order: ["date"],
           },
         ],
       });
@@ -45,10 +47,13 @@ router.get('/', authRequired, async (req, res, next) => {
   }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+router.post("/", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
-      const newFriend = await Friend.create({userId: req.userId, ...req.body});
+      const newFriend = await Friend.create({
+        userId: req.userId,
+        ...req.body,
+      });
 
       res.status(200).send({
         newFriend,
@@ -59,7 +64,7 @@ router.post('/', authRequired, async (req, res, next) => {
   }
 });
 
-router.get('/:friendId', authRequired, async (req, res, next) => {
+router.get("/:friendId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const friend = await Friend.findOne({
@@ -84,7 +89,7 @@ router.get('/:friendId', authRequired, async (req, res, next) => {
   }
 });
 
-router.put('/:friendId', authRequired, async (req, res, next) => {
+router.put("/:friendId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const friend = await Friend.findOne({
@@ -104,14 +109,14 @@ router.put('/:friendId', authRequired, async (req, res, next) => {
   }
 });
 
-router.delete('/:friendId', authRequired, async (req, res, next) => {
+router.delete("/:friendId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
       const deleteCommCount = await Communication.destroy({
-        where: {userId: req.userId, friendId: req.params.friendId},
+        where: { userId: req.userId, friendId: req.params.friendId },
       });
       const deleteCount = await Friend.destroy({
-        where: {userId: req.userId, id: req.params.friendId},
+        where: { userId: req.userId, id: req.params.friendId },
       });
 
       res.status(200).json(deleteCount);

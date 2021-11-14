@@ -63,12 +63,11 @@ export const _fetchComms = () => {
 export const _createRecurringComm = (comm, friendId, imageUrl) => {
   return async (dispatch) => {
     try {
-      console.log(imageUrl);
-      const token = await deviceState.getJWT();
+      const token = window.localStorage.getItem(TOKEN);
 
       if (token) {
         const { data } = await axios.post(
-          `http://192.168.86.32:8080/api/communications/recurring/${friendId}`,
+          `/api/communications/recurring/${friendId}`,
           comm,
           {
             headers: {

@@ -1,33 +1,33 @@
-import axios from 'axios';
-import {_createRecurringComm} from './index';
+import axios from "axios";
+import { _createRecurringComm } from "./index";
 
-const SET_FRIENDS = 'SET_FRIENDS';
-const SET_NEW_FRIEND = 'SET_NEW_FRIEND';
-const EDIT_FRIEND = 'EDIT_FRIEND';
-const DELETE_FRIEND = 'DELETE_FRIEND';
+const SET_FRIENDS = "SET_FRIENDS";
+const SET_NEW_FRIEND = "SET_NEW_FRIEND";
+const EDIT_FRIEND = "EDIT_FRIEND";
+const DELETE_FRIEND = "DELETE_FRIEND";
 
-export const setFriends = friends => {
+export const setFriends = (friends) => {
   return {
     type: SET_FRIENDS,
     friends,
   };
 };
 
-export const setNewFriend = newFriend => {
+export const setNewFriend = (newFriend) => {
   return {
     type: SET_NEW_FRIEND,
     newFriend,
   };
 };
 
-export const editFriend = editedFriend => {
+export const editFriend = (editedFriend) => {
   return {
     type: EDIT_FRIEND,
     editedFriend,
   };
 };
 
-export const deleteFriend = deletedFriend => {
+export const deleteFriend = (deletedFriend) => {
   return {
     type: DELETE_FRIEND,
     deletedFriend,
@@ -35,19 +35,16 @@ export const deleteFriend = deletedFriend => {
 };
 
 export const _fetchFriends = () => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       const token = await deviceState.getJWT();
 
       if (token) {
-        const {data} = await axios.get(
-          `http://192.168.86.32:8080/api/friends/`,
-          {
-            headers: {
-              authorization: token,
-            },
+        const { data } = await axios.get(`api/friends/`, {
+          headers: {
+            authorization: token,
           },
-        );
+        });
 
         if (data.length) {
           dispatch(setFriends(data));
@@ -60,23 +57,23 @@ export const _fetchFriends = () => {
 };
 
 export const _createFriend = (newFriend, comm) => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       const token = await deviceState.getJWT();
 
       if (token) {
-        const {data} = await axios.post(
+        const { data } = await axios.post(
           `http://192.168.86.32:8080/api/friends/`,
           newFriend,
           {
             headers: {
               authorization: token,
             },
-          },
+          }
         );
 
         if (data.newFriend) {
-          let friendName = '';
+          let friendName = "";
           if (newFriend.nickname) {
             friendName = newFriend.nickname;
           } else {
@@ -85,15 +82,15 @@ export const _createFriend = (newFriend, comm) => {
           dispatch(setNewFriend(data.newFriend));
           dispatch(
             _createRecurringComm(
-              {friend: friendName, ...comm},
+              { friend: friendName, ...comm },
               data.newFriend.id,
-              data.newFriend.imageUrl,
-            ),
+              data.newFriend.imageUrl
+            )
           );
         }
       }
     } catch (error) {
-      console.log('_Create Friend Error: ' + error);
+      console.log("_Create Friend Error: " + error);
     }
   };
 };
@@ -107,7 +104,7 @@ export default (state = [], action) => {
     case EDIT_FRIEND:
       let stateCopy = [...state];
       if (stateCopy.length) {
-        stateCopy = stateCopy.map(item => {
+        stateCopy = stateCopy.map((item) => {
           if (item.id === action.editedFriend.id) {
             item = action.editedFriend;
           }
@@ -119,7 +116,7 @@ export default (state = [], action) => {
       let deletedStateCopy = [...state];
       if (deletedStateCopy.length) {
         deletedStateCopy = deletedStateCopy.filter(
-          item => item.id !== action.deletedFriend,
+          (item) => item.id !== action.deletedFriend
         );
       }
       return deletedStateCopy;

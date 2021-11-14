@@ -1,47 +1,89 @@
-import React from "react";
-import Timeline from "@material-ui/lab/Timeline";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { _fetchSingleFriend } from "../store";
+
+import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 import TimelineDot from "@mui/lab/TimelineDot";
-
-function LeftPositionedTimeline() {
-  return (
-    <Timeline position="left">
-      <TimelineItem>
-        <TimelineSeparator>
-          <TimelineDot />
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent>Eat</TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineSeparator>
-          <TimelineDot />
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent>Code</TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineSeparator>
-          <TimelineDot />
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent>Sleep</TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineSeparator>
-          <TimelineDot />
-        </TimelineSeparator>
-        <TimelineContent>Repeat</TimelineContent>
-      </TimelineItem>
-    </Timeline>
-  );
-}
+import Typography from "@mui/material/Typography";
+import TextsmsIcon from "@mui/icons-material/Textsms";
+import CallIcon from "@mui/icons-material/Call";
+// in person
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
+//future
+import UpdateIcon from "@mui/icons-material/Update";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+//letter
+import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
+//other
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const SingleFriend = (props) => {
-  return <LeftPositionedTimeline />;
+  const dispatch = useDispatch();
+  const singleFriend = useSelector((state) => state.singleFriend);
+
+  useEffect(() => {
+    dispatch(_fetchSingleFriend(props.match.params.friendId));
+  }, [dispatch]);
+
+  if (!singleFriend.id) {
+    return null;
+  }
+
+  const getIcon = (type) => {
+    if (type === "phone-call") {
+      return <CallIcon />;
+    } else if (type === "text") {
+      return <TextsmsIcon />;
+    } else if (type === "in-person") {
+      return <ConnectWithoutContactIcon />;
+    } else if (type === "social-media") {
+      return <InstagramIcon />;
+    } else if (type === "email") {
+      return <AlternateEmailIcon />;
+    } else if (type === "letter") {
+      return <MarkunreadMailboxIcon />;
+    } else if (type === "other") {
+      return <MoreHorizIcon />;
+    } else if (type === "future") {
+      return <UpdateIcon />;
+    }
+  };
+
+  return (
+    <Timeline position="alternate">
+      {singleFriend.communications.map((comm) => {
+        return (
+          <TimelineItem key={comm.id}>
+            <TimelineOppositeContent
+              sx={{ m: "auto 0" }}
+              align="right"
+              variant="body2"
+              color="text.secondary"
+            >
+              {comm.start}
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineConnector />
+              <TimelineDot color="primary">{getIcon(comm.type)}</TimelineDot>
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent sx={{ py: "12px", px: 2 }}>
+              <Typography variant="h6" component="span">
+                {comm.title}
+              </Typography>
+              <Typography>{comm.content}</Typography>
+            </TimelineContent>
+          </TimelineItem>
+        );
+      })}
+    </Timeline>
+  );
 };
 
 export default SingleFriend;
