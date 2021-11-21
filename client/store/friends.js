@@ -1,6 +1,7 @@
 import axios from "axios";
 import { _createRecurringComm } from "./index";
 
+const TOKEN = "token";
 const SET_FRIENDS = "SET_FRIENDS";
 const SET_NEW_FRIEND = "SET_NEW_FRIEND";
 const EDIT_FRIEND = "EDIT_FRIEND";
@@ -37,10 +38,10 @@ export const deleteFriend = (deletedFriend) => {
 export const _fetchFriends = () => {
   return async (dispatch) => {
     try {
-      const token = await deviceState.getJWT();
+      const token = window.localStorage.getItem(TOKEN);
 
       if (token) {
-        const { data } = await axios.get(`api/friends/`, {
+        const { data } = await axios.get(`/api/friends/`, {
           headers: {
             authorization: token,
           },
@@ -59,25 +60,21 @@ export const _fetchFriends = () => {
 export const _createFriend = (newFriend, comm) => {
   return async (dispatch) => {
     try {
-      const token = await deviceState.getJWT();
+      const token = window.localStorage.getItem(TOKEN);
 
       if (token) {
-        const { data } = await axios.post(
-          `http://192.168.86.32:8080/api/friends/`,
-          newFriend,
-          {
-            headers: {
-              authorization: token,
-            },
-          }
-        );
+        const { data } = await axios.post(`/api/friends/`, newFriend, {
+          headers: {
+            authorization: token,
+          },
+        });
 
         if (data.newFriend) {
           let friendName = "";
           if (newFriend.nickname) {
             friendName = newFriend.nickname;
           } else {
-            friendName = newFriend.firstName + newFriend.lastName;
+            friendName = newFriend.firstName + " " + newFriend.lastName;
           }
           dispatch(setNewFriend(data.newFriend));
           dispatch(

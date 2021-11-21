@@ -13,6 +13,7 @@ import Calendar from "./components/Calendar";
 import Landing from "./components/Landing";
 import FriendsList from "./components/FriendsList";
 import SingleFriend from "./components/SingleFriend";
+import AddOrEditFriend from "./components/AddOrEditFriend";
 import { me } from "./store";
 
 /**
@@ -51,6 +52,18 @@ const Routes = () => {
           exact
           path="/friends"
           component={FriendsList}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/friends/add"
+          component={AddOrEditFriend}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/friends/edit/:friendId"
+          component={AddOrEditFriend}
         />
         <LoggedInRoute
           isLoggedIn={loggedIn}
