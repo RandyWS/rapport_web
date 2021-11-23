@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { _fetchComms } from "../store";
+import { _fetchTimelineComms } from "../store";
 
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
@@ -25,10 +25,9 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const Home = (props) => {
   const dispatch = useDispatch();
-  const comms = useSelector((state) => state.comms);
-
+  const { timelineComms } = useSelector((state) => state.comms);
   useEffect(() => {
-    dispatch(_fetchComms());
+    dispatch(_fetchTimelineComms());
   }, [dispatch]);
 
   const getIcon = (type) => {
@@ -53,7 +52,7 @@ const Home = (props) => {
 
   return (
     <Timeline position="alternate">
-      {comms.map((comm, index) => {
+      {timelineComms.map((comm, index) => {
         return (
           <TimelineItem key={index}>
             <TimelineOppositeContent

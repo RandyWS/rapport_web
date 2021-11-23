@@ -21,7 +21,7 @@ const Calendar = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-  const comms = useSelector((state) => state.comms);
+  const { comms } = useSelector((state) => state.comms);
 
   useEffect(() => {
     dispatch(_fetchComms());
