@@ -1,36 +1,122 @@
 import React from "react";
 import { connect } from "react-redux";
 import { authenticate } from "../store";
-import Button from "@material-ui/core/Button";
+import {
+  Button,
+  TextField,
+  Grid,
+  Paper,
+  Typography,
+  Link,
+  makeStyles,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  loginForm: {
+    justifContent: "center",
+    minHeight: "90vh",
+  },
+  buttonBlock: {
+    width: "100%",
+  },
+  loginBackground: {
+    justifyContent: "center",
+    minHeight: "30vh",
+    padding: "50px",
+  },
+  error: {
+    color: "red",
+  },
+}));
 
 /**
  * COMPONENT
  */
 const AuthForm = (props) => {
+  const classes = useStyles();
   const { name, displayName, handleSubmit, error } = props;
 
   return (
     <div>
-      <form onSubmit={handleSubmit} name={name}>
-        <div>
-          <label htmlFor="username">
-            <small>Username</small>
-          </label>
-          <input name="username" type="text" />
-        </div>
-        <div>
-          <label htmlFor="password">
-            <small>Password</small>
-          </label>
-          <input name="password" type="password" />
-        </div>
-        <div>
-          <Button type="submit" variant="outlined">
-            {displayName}
-          </Button>
-        </div>
-        {error && error.response && <div> {error.response.data} </div>}
-      </form>
+      <Grid container spacing={0} justifyContent="center" direction="row">
+        <Grid item>
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            spacing={2}
+            className={classes.loginForm}
+          >
+            <Paper
+              variant="elevation"
+              elevation={2}
+              className={classes.loginBackground}
+            >
+              {error && error.response && (
+                <Grid item>
+                  <Typography
+                    component="h5"
+                    variant="h6"
+                    className={classes.error}
+                  >
+                    <div> {error.response.data} </div>
+                  </Typography>
+                </Grid>
+              )}
+              <Grid item>
+                <Typography component="h1" variant="h5">
+                  {displayName}
+                </Typography>
+              </Grid>
+              <form onSubmit={handleSubmit} name={name}>
+                <Grid item>
+                  <Grid container direction="column" spacing={2}>
+                    <Grid item>
+                      <TextField
+                        type="text"
+                        placeholder="Username"
+                        fullWidth
+                        name="username"
+                        variant="outlined"
+                        required
+                        autoFocus
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        type="password"
+                        placeholder="Password"
+                        fullWidth
+                        name="password"
+                        variant="outlined"
+                        required
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        className={classes.buttonBlock}
+                      >
+                        {displayName}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  {error && error.response && (
+                    <div> {error.response.data} </div>
+                  )}
+                </Grid>
+              </form>
+              <Grid item>
+                <Link href="#" variant="body2">
+                  Forgot Password?
+                </Link>
+              </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Grid>
     </div>
   );
 };
