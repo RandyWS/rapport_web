@@ -14,7 +14,7 @@ import TimePicker from "@mui/lab/TimePicker";
 import Typography from "@mui/material/Typography";
 
 import { useDispatch, useSelector } from "react-redux";
-import { _fetchSingleFriend, _createFriend } from "../store";
+import { _fetchSingleFriend, _createFriend, _editFriend } from "../store";
 
 const AddOrEditFriend = (props) => {
   const dispatch = useDispatch();
@@ -26,6 +26,11 @@ const AddOrEditFriend = (props) => {
   const [frequency, setFrequency] = useState("weekly");
   const [time, setTime] = useState(new Date());
   const [weekDay, setWeekDay] = useState(0);
+  const [error, setError] = useState({
+    firstName: "",
+    lastName: "",
+    nickname: "",
+  });
 
   const frequencyArr = [
     { label: "Daily", value: "daily" },
@@ -44,7 +49,7 @@ const AddOrEditFriend = (props) => {
     { label: "Sunday", value: 0 },
   ];
 
-  const singleFriend = useSelector((state) => state.singleFriend);
+  const { singleFriend } = useSelector((state) => state.friends);
 
   useEffect(() => {
     if (props.match.params.friendId) {
@@ -52,17 +57,21 @@ const AddOrEditFriend = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (singleFriend.id) {
+      setFirstName(singleFriend.firstName);
+      setLastName(singleFriend.lastName);
+      setNickname(singleFriend.nickname);
+      setImageUrl(singleFriend.imageUrl);
+      setDescription(singleFriend.description);
+    }
+  }, singleFriend.id);
+
   const addFriend = () => {
-    console.log("button clicked");
-    console.log(
-      nickname,
-      firstName,
-      lastName,
-      description,
-      frequency,
-      weekDay,
-      time
-    );
+    let error = { firstName: "", lastName: "" };
+    error.firstName = !firstName.length ? "Please provide a first name." : "";
+    error.lastName = !lastName.length ? "Please provide a last name." : "";
+    setError(error);
     dispatch(
       _createFriend(
         {
@@ -75,7 +84,27 @@ const AddOrEditFriend = (props) => {
           frequency,
           weekDay,
           time,
-        }
+        },
+        props.history
+      )
+    );
+  };
+
+  const editFriend = () => {
+    let error = { firstName: "", lastName: "" };
+    error.firstName = !firstName.length ? "Please provide a first name." : "";
+    error.lastName = !lastName.length ? "Please provide a last name." : "";
+    setError(error);
+    dispatch(
+      _editFriend(
+        singleFriend.id,
+        {
+          nickname,
+          firstName,
+          lastName,
+          description,
+        },
+        props.history
       )
     );
   };
@@ -83,7 +112,7 @@ const AddOrEditFriend = (props) => {
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
-      {props.match.params.postId ? (
+      {props.match.params.friendId ? (
         <Button
           onClick={() => {
             editFriend();
@@ -112,25 +141,25 @@ const AddOrEditFriend = (props) => {
         autoComplete="off"
       >
         <FormControl sx={{ m: 1 }}>
-          <InputLabel htmlFor="outlined-adornment-amount">
-            First Name
-          </InputLabel>
-          <OutlinedInput
+          <TextField
             required
-            id="outlined-adornment-amount"
+            id="outlined-error-helper-text"
             value={firstName}
             onChange={(ev) => setFirstName(ev.target.value)}
-            label="First"
+            label="First Name"
+            error={error.firstName.length > 0}
+            helperText={error.firstName.length ? error.firstName : " "}
           />
         </FormControl>
         <FormControl sx={{ m: 1 }}>
-          <InputLabel htmlFor="outlined-adornment-amount">Last Name</InputLabel>
-          <OutlinedInput
+          <TextField
             required
-            id="outlined-adornment-amount"
+            id="outlined-error-helper-text"
             value={lastName}
             onChange={(ev) => setLastName(ev.target.value)}
-            label="Last"
+            label="Last Name"
+            error={error.lastName.length > 0}
+            helperText={error.lastName.length ? error.lastName : " "}
           />
         </FormControl>
         <FormControl sx={{ m: 1 }}>

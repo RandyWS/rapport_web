@@ -29,13 +29,17 @@ const useStyles = makeStyles((theme) => ({
 
 const FriendList = (props) => {
   const dispatch = useDispatch();
-  const friends = useSelector((state) => state.friends);
+  const { friends } = useSelector((state) => state.friends);
   const classes = useStyles();
-  console.log(friends);
 
   useEffect(() => {
     dispatch(_fetchFriends());
   }, [dispatch]);
+
+  const clickHandler = (id) => {
+    const route = `/friends/${id}`;
+    props.history.push(route);
+  };
 
   const getIcon = (type) => {
     if (type === "phone-call") {
@@ -66,7 +70,13 @@ const FriendList = (props) => {
       <Grid container justifyContent="center" alignItems="center">
         {friends.map((friend) => {
           return (
-            <Grid container justifyContent="center" alignItems="center">
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="center"
+              onClick={() => clickHandler(friend.id)}
+              key={friend.id}
+            >
               <Grid item xs={12} sm={5} md={4}>
                 <Box pt={1}>
                   <CardMedia

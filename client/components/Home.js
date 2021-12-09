@@ -51,7 +51,7 @@ const Home = (props) => {
   };
 
   return (
-    <Timeline position="alternate">
+    <Timeline position="right">
       {timelineComms.map((comm, index) => {
         return (
           <TimelineItem key={index}>

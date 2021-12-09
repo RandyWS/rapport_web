@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { _fetchSingleFriend } from "../store";
+import { _fetchSingleFriend, _deleteSingleFriend } from "../store";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SingleFriend = (props) => {
   const dispatch = useDispatch();
-  const singleFriend = useSelector((state) => state.singleFriend);
+  const { singleFriend } = useSelector((state) => state.friends);
   const classes = useStyles();
 
   useEffect(() => {
@@ -80,13 +80,25 @@ const SingleFriend = (props) => {
     }
   };
 
+  const handleDelete = () => {
+    dispatch(_deleteSingleFriend(singleFriend.id, props.history));
+  };
+
+  const handleEdit = () => {
+    props.history.push(`/friends/edit/${singleFriend.id}`);
+  };
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
       <Stack spacing={2} direction="row">
         <Button variant="outlined">Add Convo</Button>
-        <Button variant="outlined">Edit</Button>
-        <Button variant="outlined">Delete</Button>
+        <Button variant="outlined" onClick={() => handleEdit()}>
+          Edit
+        </Button>
+        <Button variant="outlined" onClick={() => handleDelete()}>
+          Delete
+        </Button>
       </Stack>
       <Grid container justifyContent="center" alignItems="center">
         <Grid item xs={12} sm={5} md={4}>
@@ -151,7 +163,7 @@ const SingleFriend = (props) => {
           </Box>
         </Grid>
       </Grid>
-      <Timeline position="alternate">
+      <Timeline position="right">
         {singleFriend.communications.map((comm) => {
           return (
             <TimelineItem key={comm.id}>
