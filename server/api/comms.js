@@ -89,14 +89,14 @@ router.get("/timeline", authRequired, async (req, res, next) => {
 router.post("/", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
-      const newCommunication = await Communication.create({
+      const newComm = await Communication.create({
         userId: req.userId,
         friendId: req.body.friendId,
         ...req.body,
       });
 
       res.status(200).send({
-        newCommunication,
+        newComm,
       });
     }
   } catch (error) {
@@ -195,6 +195,28 @@ router.get("/:commId", authRequired, async (req, res, next) => {
 
       if (comm.id) {
         res.status(200).json(comm);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:commId", authRequired, async (req, res, next) => {
+  try {
+    if (req.userId) {
+      console.log(req.body);
+      const comm = await Communication.findOne({
+        where: {
+          userId: req.userId,
+          friendId: req.body.friendId,
+          id: req.params.commId,
+        },
+      });
+
+      if (comm.id) {
+        const editedComm = await comm.update(req.body);
+        res.status(200).json(editedComm);
       }
     }
   } catch (error) {

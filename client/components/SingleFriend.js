@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { _fetchSingleFriend, _deleteSingleFriend } from "../store";
+import AddOrEditConvo from "./AddOrEditConvo";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
@@ -50,7 +51,10 @@ const useStyles = makeStyles((theme) => ({
 const SingleFriend = (props) => {
   const dispatch = useDispatch();
   const { singleFriend } = useSelector((state) => state.friends);
+  const { singleFriendComms } = useSelector((state) => state.comms);
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const [comm, setComm] = useState({});
 
   useEffect(() => {
     dispatch(_fetchSingleFriend(props.match.params.friendId));
@@ -80,6 +84,15 @@ const SingleFriend = (props) => {
     }
   };
 
+  const handleFormOpen = () => {
+    setOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setComm({});
+    setOpen(false);
+  };
+
   const handleDelete = () => {
     dispatch(_deleteSingleFriend(singleFriend.id, props.history));
   };
@@ -92,7 +105,14 @@ const SingleFriend = (props) => {
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
       <Stack spacing={2} direction="row">
-        <Button variant="outlined">Add Convo</Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            handleFormOpen();
+          }}
+        >
+          Add Convo
+        </Button>
         <Button variant="outlined" onClick={() => handleEdit()}>
           Edit
         </Button>
@@ -100,6 +120,12 @@ const SingleFriend = (props) => {
           Delete
         </Button>
       </Stack>
+      <AddOrEditConvo
+        open={open}
+        handleFormClose={handleFormClose}
+        friendId={singleFriend.id}
+        comm={comm}
+      />
       <Grid container justifyContent="center" alignItems="center">
         <Grid item xs={12} sm={5} md={4}>
           <Box pt={1}>
@@ -164,9 +190,15 @@ const SingleFriend = (props) => {
         </Grid>
       </Grid>
       <Timeline position="right">
-        {singleFriend.communications.map((comm) => {
+        {singleFriendComms.map((comm) => {
           return (
-            <TimelineItem key={comm.id}>
+            <TimelineItem
+              key={comm.id}
+              onClick={() => {
+                setComm(comm);
+                handleFormOpen();
+              }}
+            >
               <TimelineOppositeContent
                 sx={{ m: "auto 0" }}
                 align="right"

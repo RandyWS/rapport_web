@@ -77,8 +77,8 @@ router.get("/:friendId", authRequired, async (req, res, next) => {
             model: Communication,
           },
         ],
+        order: [[{ model: Communication }, "start", "DESC"]],
       });
-      console.log(friend);
 
       if (friend.id) {
         res.status(200).json(friend);

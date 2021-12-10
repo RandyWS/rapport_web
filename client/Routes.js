@@ -14,6 +14,7 @@ import Landing from "./components/Landing";
 import FriendsList from "./components/FriendsList";
 import SingleFriend from "./components/SingleFriend";
 import AddOrEditFriend from "./components/AddOrEditFriend";
+import AddOrEditConvo from "./components/AddOrEditConvo";
 import { me } from "./store";
 
 /**
@@ -70,6 +71,18 @@ const Routes = () => {
           exact
           path="/friends/:friendId"
           component={SingleFriend}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/conversation/add"
+          component={AddOrEditConvo}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/conversation/edit/:convoId"
+          component={AddOrEditConvo}
         />
         <GuestRoute
           isLoggedIn={loggedIn}

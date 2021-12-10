@@ -1,5 +1,5 @@
 import axios from "axios";
-import { _createRecurringComm } from "./index";
+import { _createRecurringComm, setSingleFriendComms } from "./index";
 
 const TOKEN = "token";
 const SET_FRIENDS = "SET_FRIENDS";
@@ -87,6 +87,7 @@ export const _fetchSingleFriend = (friendId) => {
 
         if (data.id) {
           dispatch(setSingleFriend(data));
+          dispatch(setSingleFriendComms(data.communications));
         }
       }
     } catch (error) {
@@ -142,7 +143,7 @@ export const _deleteSingleFriend = (friendId, history) => {
             authorization: token,
           },
         });
-        console.log("deleted data", data);
+
         if (data) {
           dispatch(deleteFriend(friendId));
           history.push("/friends");

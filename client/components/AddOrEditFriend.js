@@ -68,26 +68,30 @@ const AddOrEditFriend = (props) => {
   }, singleFriend.id);
 
   const addFriend = () => {
-    let error = { firstName: "", lastName: "" };
-    error.firstName = !firstName.length ? "Please provide a first name." : "";
-    error.lastName = !lastName.length ? "Please provide a last name." : "";
+    let currError = { firstName: "", lastName: "" };
+    currError.firstName = !firstName.length
+      ? "Please provide a first name."
+      : "";
+    currError.lastName = !lastName.length ? "Please provide a last name." : "";
     setError(error);
-    dispatch(
-      _createFriend(
-        {
-          nickname,
-          firstName,
-          lastName,
-          description,
-        },
-        {
-          frequency,
-          weekDay,
-          time,
-        },
-        props.history
-      )
-    );
+    if (!currError.firstName.length && !currError.lastName.length) {
+      dispatch(
+        _createFriend(
+          {
+            nickname,
+            firstName,
+            lastName,
+            description,
+          },
+          {
+            frequency,
+            weekDay,
+            time,
+          },
+          props.history
+        )
+      );
+    }
   };
 
   const editFriend = () => {
