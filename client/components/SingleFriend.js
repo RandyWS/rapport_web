@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { _fetchSingleFriend, _deleteSingleFriend } from "../store";
+import { _fetchSingleFriend } from "../store";
 import AddOrEditConvo from "./AddOrEditConvo";
+import AddOrEditFriend from "./AddOrEdit";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
@@ -53,8 +54,9 @@ const SingleFriend = (props) => {
   const { singleFriend } = useSelector((state) => state.friends);
   const { singleFriendComms } = useSelector((state) => state.comms);
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+  const [commOpen, setCommOpen] = useState(false);
   const [comm, setComm] = useState({});
+  const [friendOpen, setFriendOpen] = useState(false);
 
   useEffect(() => {
     dispatch(_fetchSingleFriend(props.match.params.friendId));
@@ -84,21 +86,20 @@ const SingleFriend = (props) => {
     }
   };
 
-  const handleFormOpen = () => {
-    setOpen(true);
+  const handleCommFormOpen = () => {
+    setCommOpen(true);
   };
 
-  const handleFormClose = () => {
-    setComm({});
-    setOpen(false);
+  const handleCommFormClose = () => {
+    setCommOpen(false);
   };
 
-  const handleDelete = () => {
-    dispatch(_deleteSingleFriend(singleFriend.id, props.history));
+  const handleFriendFormOpen = () => {
+    setFriendOpen(true);
   };
 
-  const handleEdit = () => {
-    props.history.push(`/friends/edit/${singleFriend.id}`);
+  const handleFriendFormClose = () => {
+    setFriendOpen(false);
   };
 
   return (
@@ -108,24 +109,28 @@ const SingleFriend = (props) => {
         <Button
           variant="outlined"
           onClick={() => {
-            handleFormOpen();
+            handleCommFormOpen();
           }}
         >
           Add Convo
         </Button>
-        <Button variant="outlined" onClick={() => handleEdit()}>
+        <Button variant="outlined" onClick={() => handleFriendFormOpen()}>
           Edit
-        </Button>
-        <Button variant="outlined" onClick={() => handleDelete()}>
-          Delete
         </Button>
       </Stack>
       <AddOrEditConvo
-        open={open}
-        handleFormClose={handleFormClose}
+        open={commOpen}
+        handleFormClose={handleCommFormClose}
         friendId={singleFriend.id}
         comm={comm}
       />
+
+      <AddOrEditFriend
+        open={friendOpen}
+        handleFormClose={handleFriendFormClose}
+        friend={singleFriend}
+      />
+
       <Grid container justifyContent="center" alignItems="center">
         <Grid item xs={12} sm={5} md={4}>
           <Box pt={1}>
@@ -196,7 +201,7 @@ const SingleFriend = (props) => {
               key={comm.id}
               onClick={() => {
                 setComm(comm);
-                handleFormOpen();
+                handleCommFormOpen();
               }}
             >
               <TimelineOppositeContent

@@ -65,7 +65,7 @@ const AddOrEditFriend = (props) => {
       setImageUrl(singleFriend.imageUrl);
       setDescription(singleFriend.description);
     }
-  }, singleFriend.id);
+  }, [singleFriend.id]);
 
   const addFriend = () => {
     let currError = { firstName: "", lastName: "" };
