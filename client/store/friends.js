@@ -96,7 +96,7 @@ export const _fetchSingleFriend = (friendId) => {
   };
 };
 
-export const _createFriend = (newFriend, comm, history) => {
+export const _createFriend = (newFriend, comm) => {
   return async (dispatch) => {
     try {
       const token = window.localStorage.getItem(TOKEN);
@@ -123,7 +123,6 @@ export const _createFriend = (newFriend, comm, history) => {
               data.newFriend.imageUrl
             )
           );
-          history.push("/friends");
         }
       }
     } catch (error) {
@@ -155,7 +154,7 @@ export const _deleteSingleFriend = (friendId, history) => {
   };
 };
 
-export const _editFriend = (friendId, friend, history) => {
+export const _editFriend = (friendId, friend) => {
   return async (dispatch) => {
     try {
       const token = window.localStorage.getItem(TOKEN);
@@ -169,7 +168,6 @@ export const _editFriend = (friendId, friend, history) => {
 
         if (data.id) {
           dispatch(editFriend(data));
-          history.push(`/friends`);
         }
       }
     } catch (error) {
@@ -188,7 +186,12 @@ export default (state = initialState, action) => {
     case SET_FRIENDS:
       return { ...state, friends: action.friends };
     case SET_NEW_FRIEND:
-      return { friends: [...state.friends, action.newFriend], ...state };
+      let friendCopy = [...state.friends];
+      friendCopy.push(action.newFriend);
+
+      console.log("friendCopy", friendCopy);
+      console.log("action friend", action.newFriend);
+      return { friends: friendCopy, ...state };
     case SET_SINGLE_FRIEND:
       return { ...state, singleFriend: action.singleFriend };
     case RESET_SINGLE_FRIEND:
@@ -209,9 +212,11 @@ export default (state = initialState, action) => {
           return friend;
         }
       });
+
       return {
         ...state,
         friends: editedFriends,
+        singleFriend: action.editedFriend,
       };
     default:
       return state;

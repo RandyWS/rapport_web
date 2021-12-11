@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { _fetchFriends } from "../store";
+import AddOrEditFriend from "./AddOrEdit";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Link from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CardMedia from "@mui/material/CardMedia";
@@ -30,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 const FriendList = (props) => {
   const dispatch = useDispatch();
   const { friends } = useSelector((state) => state.friends);
+  const [friendOpen, setFriendOpen] = useState(false);
   const classes = useStyles();
 
   useEffect(() => {
@@ -61,11 +64,32 @@ const FriendList = (props) => {
     }
   };
 
+  const handleFriendFormOpen = () => {
+    setFriendOpen(true);
+  };
+
+  const handleFriendFormClose = () => {
+    setFriendOpen(false);
+  };
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
 
-      <Link href="/friends/add">Add Friend</Link>
+      <Stack spacing={2} direction="row">
+        <Button
+          variant="outlined"
+          onClick={() => {
+            handleFriendFormOpen();
+          }}
+        >
+          Add Friend
+        </Button>
+      </Stack>
+      <AddOrEditFriend
+        open={friendOpen}
+        handleFormClose={handleFriendFormClose}
+      />
 
       <Grid container justifyContent="center" alignItems="center">
         {friends.map((friend) => {

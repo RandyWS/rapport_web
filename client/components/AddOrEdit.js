@@ -47,14 +47,14 @@ const AddOrEditFriend = (props) => {
     { label: "Saturday", value: 6 },
     { label: "Sunday", value: 0 },
   ];
-
+  console.log(props);
   useEffect(() => {
-    if (props.friend.id) {
+    if (props.friend) {
       setFirstName(props.friend.firstName);
       setLastName(props.friend.lastName);
-      setNickname(props.friend.nickname);
+      setNickname(props.friend.nickname || "");
       setImageUrl(props.friend.imageUrl);
-      setDescription(props.friend.description);
+      setDescription(props.friend.description || "");
     }
   }, [props.friend]);
 
@@ -67,10 +67,9 @@ const AddOrEditFriend = (props) => {
 
     setError(currError);
     if (!currError.firstName.length && !currError.lastName.length) {
-      if (props.friend.id) {
+      if (props.friend) {
         dispatch(
-          _editFriend({
-            friendId: props.friend.id,
+          _editFriend(props.friend.id, {
             nickname,
             firstName,
             lastName,
@@ -90,18 +89,16 @@ const AddOrEditFriend = (props) => {
               frequency,
               weekDay,
               time,
-            },
-            props.history
+            }
           )
         );
       }
       props.handleFormClose();
-      clearForm();
     }
   };
 
   const deleteFriend = () => {
-    dispatch(_deleteFriend(props.friend.id));
+    dispatch(_deleteSingleFriend(props.friend.id, props.history));
     props.handleFormClose();
     clearForm();
   };
@@ -119,7 +116,7 @@ const AddOrEditFriend = (props) => {
       {!deleteOpen ? (
         <>
           <DialogTitle>
-            {props.friend.id ? "Edit Friend" : "Add Friend"}
+            {props.friend ? "Edit Friend" : "Add Friend"}
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -223,15 +220,14 @@ const AddOrEditFriend = (props) => {
             <Button
               onClick={() => {
                 props.handleFormClose();
-                clearForm();
               }}
             >
               Cancel
             </Button>
             <Button onClick={() => addOrEdit()}>
-              {props.friend.id ? "Edit" : "Add"}
+              {props.friend ? "Edit" : "Add"}
             </Button>
-            {props.friend.id ? (
+            {props.friend ? (
               <Button color="warning" onClick={() => setDeleteOpen(true)}>
                 Delete
               </Button>

@@ -129,6 +129,7 @@ const SingleFriend = (props) => {
         open={friendOpen}
         handleFormClose={handleFriendFormClose}
         friend={singleFriend}
+        history={props.history}
       />
 
       <Grid container justifyContent="center" alignItems="center">
