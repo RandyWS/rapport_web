@@ -47,7 +47,7 @@ const AddOrEditFriend = (props) => {
     { label: "Saturday", value: 6 },
     { label: "Sunday", value: 0 },
   ];
-  console.log(props);
+
   useEffect(() => {
     if (props.friend) {
       setFirstName(props.friend.firstName);

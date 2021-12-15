@@ -189,9 +189,7 @@ export default (state = initialState, action) => {
       let friendCopy = [...state.friends];
       friendCopy.push(action.newFriend);
 
-      console.log("friendCopy", friendCopy);
-      console.log("action friend", action.newFriend);
-      return { friends: friendCopy, ...state };
+      return { ...state, friends: friendCopy };
     case SET_SINGLE_FRIEND:
       return { ...state, singleFriend: action.singleFriend };
     case RESET_SINGLE_FRIEND:

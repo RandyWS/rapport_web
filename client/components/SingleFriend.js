@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { _fetchSingleFriend } from "../store";
+import { _fetchSingleFriend, _fetchRecurring } from "../store";
 import AddOrEditConvo from "./AddOrEditConvo";
 import AddOrEditFriend from "./AddOrEdit";
+import SingleFriendComms from "./SingleFriendComms";
+import moment from "moment";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
@@ -11,26 +13,9 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@material-ui/core/Grid";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
-import TimelineDot from "@mui/lab/TimelineDot";
 import Typography from "@mui/material/Typography";
-import TextsmsIcon from "@mui/icons-material/Textsms";
-import CallIcon from "@mui/icons-material/Call";
-// in person
-import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
-//future
-import UpdateIcon from "@mui/icons-material/Update";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-//letter
-import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
-//other
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 const useStyles = makeStyles((theme) => ({
   featCard: {
@@ -52,38 +37,44 @@ const useStyles = makeStyles((theme) => ({
 const SingleFriend = (props) => {
   const dispatch = useDispatch();
   const { singleFriend } = useSelector((state) => state.friends);
-  const { singleFriendComms } = useSelector((state) => state.comms);
+  const { singleFriendComms, singleFriendRecurring } = useSelector(
+    (state) => state.comms
+  );
   const classes = useStyles();
   const [commOpen, setCommOpen] = useState(false);
   const [comm, setComm] = useState({});
   const [friendOpen, setFriendOpen] = useState(false);
+  const [tab, setTab] = useState(0);
+  const [comms, setComms] = useState([]);
+  const [futureComms, setFutureComms] = useState([]);
 
   useEffect(() => {
     dispatch(_fetchSingleFriend(props.match.params.friendId));
+    dispatch(_fetchRecurring(props.match.params.friendId));
   }, [dispatch]);
+
+  useEffect(() => {
+    let friendComms = [];
+    let future = [];
+    singleFriendComms.forEach((comm) => {
+      if (comm.type === "future") {
+        future.unshift(comm);
+      } else {
+        friendComms.push(comm);
+      }
+
+      setComms(friendComms);
+      setFutureComms(future);
+    });
+  }, [singleFriendComms]);
 
   if (!singleFriend.id) {
     return null;
   }
+  console.log("recurring", singleFriendRecurring);
 
-  const getIcon = (type) => {
-    if (type === "phone-call") {
-      return <CallIcon />;
-    } else if (type === "text") {
-      return <TextsmsIcon />;
-    } else if (type === "in-person") {
-      return <ConnectWithoutContactIcon />;
-    } else if (type === "social-media") {
-      return <InstagramIcon />;
-    } else if (type === "email") {
-      return <AlternateEmailIcon />;
-    } else if (type === "letter") {
-      return <MarkunreadMailboxIcon />;
-    } else if (type === "other") {
-      return <MoreHorizIcon />;
-    } else if (type === "future") {
-      return <UpdateIcon />;
-    }
+  const handleTabChange = (event, newValue) => {
+    setTab(newValue);
   };
 
   const handleCommFormOpen = () => {
@@ -157,15 +148,15 @@ const SingleFriend = (props) => {
             <Box pt={1} m={2}>
               <Typography
                 gutterBottom
-                variant="h3"
+                variant="h4"
                 className={classes.featText}
-                component="h3"
+                component="h4"
               >
                 {singleFriend.firstName} {singleFriend.lastName}
               </Typography>
               {singleFriend.nickname ? (
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   color="textSecondary"
                   component="p"
                   className={classes.featSubtitle}
@@ -177,7 +168,7 @@ const SingleFriend = (props) => {
                 component="div"
                 variant="body1"
                 sx={{
-                  fontSize: "1.6rem",
+                  fontSize: "1.2rem",
                 }}
               >
                 {singleFriend.description}
@@ -189,45 +180,34 @@ const SingleFriend = (props) => {
                 className={classes.featSubtitle}
                 sx={{ fontStyle: "italic" }}
               >
-                Rapport Since: {singleFriend.createdAt}
+                Rapport Since:{" "}
+                {moment(singleFriend.createdAt).format("MMMM Do YYYY")}
               </Typography>
             </Box>
           </Box>
         </Grid>
       </Grid>
-      <Timeline position="right">
-        {singleFriendComms.map((comm) => {
-          return (
-            <TimelineItem
-              key={comm.id}
-              onClick={() => {
-                setComm(comm);
-                handleCommFormOpen();
-              }}
-            >
-              <TimelineOppositeContent
-                sx={{ m: "auto 0" }}
-                align="right"
-                variant="body2"
-                color="text.secondary"
-              >
-                {comm.start}
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineConnector />
-                <TimelineDot color="primary">{getIcon(comm.type)}</TimelineDot>
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent sx={{ py: "12px", px: 2 }}>
-                <Typography variant="h6" component="span">
-                  {comm.title}
-                </Typography>
-                <Typography>{comm.content}</Typography>
-              </TimelineContent>
-            </TimelineItem>
-          );
-        })}
-      </Timeline>
+
+      <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
+        <Tabs value={tab} onChange={handleTabChange} centered>
+          <Tab label="Communications" />
+          <Tab label="Scheduled" />
+        </Tabs>
+      </Box>
+
+      {tab === 0 ? (
+        <SingleFriendComms
+          comms={comms}
+          setComm={setComm}
+          handleCommFormOpen={handleCommFormOpen}
+        />
+      ) : (
+        <SingleFriendComms
+          comms={futureComms}
+          setComm={setComm}
+          handleCommFormOpen={handleCommFormOpen}
+        />
+      )}
     </Box>
   );
 };

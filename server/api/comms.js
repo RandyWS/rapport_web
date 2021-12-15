@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Sequelize = require("sequelize");
 const {
-  models: { User, Communication, Friend, Recurring_Pattern },
+  models: { User, Communication, Friend, Recurring_Pattern, Recurring_Type },
 } = require("../db");
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
@@ -104,6 +104,26 @@ router.post("/", authRequired, async (req, res, next) => {
   }
 });
 
+router.get("/recurring/:friendId", authRequired, async (req, res, next) => {
+  try {
+    if (req.userId) {
+      const recurring = await Recurring_Pattern.findAll({
+        where: {
+          friendId: req.params.friendId,
+          userId: req.userId,
+        },
+        include: { model: Recurring_Type },
+      });
+
+      res.status(200).send({
+        recurring,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/recurring/:friendId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
@@ -143,6 +163,14 @@ router.post("/recurring/:friendId", authRequired, async (req, res, next) => {
         count = 4;
       }
 
+      const recurring = await Recurring_Pattern.create({
+        friendId: req.params.friendId,
+        userId: req.userId,
+        recurring_type_id: recurringType,
+        day_of_week: req.body.weekDay,
+        separation_count,
+      });
+
       let recurringEvents = [];
 
       for (
@@ -151,6 +179,7 @@ router.post("/recurring/:friendId", authRequired, async (req, res, next) => {
         i.add(count, interval)
       ) {
         recurringEvents.push({
+          recurringId: recurring.id,
           userId: req.userId,
           friendId: req.params.friendId,
           is_recurring: true,
@@ -164,12 +193,7 @@ router.post("/recurring/:friendId", authRequired, async (req, res, next) => {
       const newComm = await Promise.all(
         recurringEvents.map(async (contact) => {
           let comm = await Communication.create(contact);
-          await Recurring_Pattern.create({
-            commId: comm.id,
-            recurring_type_id: recurringType,
-            day_of_week: req.body.weekDay,
-            separation_count,
-          });
+
           return comm;
         })
       );
@@ -205,7 +229,6 @@ router.get("/:commId", authRequired, async (req, res, next) => {
 router.put("/:commId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
-      console.log(req.body);
       const comm = await Communication.findOne({
         where: {
           userId: req.userId,

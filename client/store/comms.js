@@ -3,6 +3,7 @@ const TOKEN = "token";
 const token = window.localStorage.getItem(TOKEN);
 
 const SET_COMM = "SET_COMM";
+const SET_RECURRING = "SET_RECURRING";
 const SET_TIMELINE_COMM = "SET_TIMELINE_COMM";
 const SET_SINGLE_FRIEND_COMMS = "SET_SINGLE_FRIEND_COMMS";
 const RESET_COMM = "RESET_COMM";
@@ -28,6 +29,13 @@ export const setSingleFriendComms = (comms) => {
   return {
     type: SET_SINGLE_FRIEND_COMMS,
     comms,
+  };
+};
+
+export const setRecurring = (recurring) => {
+  return {
+    type: SET_RECURRING,
+    recurring,
   };
 };
 
@@ -76,6 +84,26 @@ export const _fetchComms = () => {
             return comm;
           });
           dispatch(setComm(communications));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const _fetchRecurring = (friendId) => {
+  return async (dispatch) => {
+    try {
+      if (token) {
+        const { data } = await axios.get(`/api/comms/recurring/${friendId}`, {
+          headers: {
+            authorization: token,
+          },
+        });
+
+        if (data.recurring) {
+          dispatch(setRecurring(data.recurring));
         }
       }
     } catch (error) {
@@ -211,6 +239,7 @@ const initialState = {
   comms: [],
   timelineComms: [],
   singleFriendComms: [],
+  singleFriendRecurring: [],
 };
 
 export default (state = initialState, action) => {
@@ -221,6 +250,9 @@ export default (state = initialState, action) => {
       return { ...state, singleFriendComms: action.comms };
     case SET_TIMELINE_COMM:
       return { ...state, timelineComms: action.comm };
+    case SET_RECURRING:
+      console.log("reached reducer");
+      return { ...state, singleFriendRecurring: action.recurring };
     case RESET_COMM:
       return initialState;
     case ADD_COMM:

@@ -15,8 +15,14 @@ Communication.belongsTo(User, { foreignKey: "userId" });
 Friend.hasMany(Communication, { foreignKey: "friendId" });
 Communication.belongsTo(Friend, { foreignKey: "friendId" });
 
-Communication.hasOne(Recurring_Pattern, { foreignKey: "commId" });
-Recurring_Pattern.belongsTo(Communication, { foreignKey: "commId" });
+Recurring_Pattern.hasOne(Communication, { foreignKey: "recurringId" });
+Communication.belongsTo(Recurring_Pattern, { foreignKey: "recurringId" });
+
+Friend.hasOne(Recurring_Pattern, { foreignKey: "friendId" });
+Recurring_Pattern.belongsTo(Friend, { foreignKey: "friendId" });
+
+User.hasOne(Recurring_Pattern, { foreignKey: "userId" });
+Recurring_Pattern.belongsTo(User, { foreignKey: "userId" });
 
 Recurring_Type.hasMany(Recurring_Pattern, { foreignKey: "recurring_type_id" });
 Recurring_Pattern.belongsTo(Recurring_Type, {
