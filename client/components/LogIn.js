@@ -1,49 +1,108 @@
-import React from "react";
-import { authenticate } from "../store";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../store";
 import {
   Button,
+  Box,
+  Toolbar,
   TextField,
   Grid,
   Paper,
-  AppBar,
   Typography,
-  Toolbar,
-  Link,
+  makeStyles,
 } from "@material-ui/core";
-const AuthForm = (props) => {
-  const { name, displayName, handleSubmit, error } = props;
+
+const useStyles = makeStyles((theme) => ({
+  loginForm: {
+    justifyContent: "center",
+  },
+  buttonBlock: {
+    width: "100%",
+  },
+  loginBackground: {
+    justifyContent: "center",
+    minHeight: "30vh",
+    padding: "50px",
+  },
+  error: {
+    color: "red",
+  },
+}));
+
+const LogIn = (props) => {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const { error } = useSelector((state) => state.auth);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (error) {
+      const dbError = { email: " ", password: " " };
+      setFormError(dbError);
+    }
+  }, [error]);
+
+  const handleSignIn = () => {
+    let currError = { email: "", password: "" };
+    currError.email = !email.length ? "Please input your email." : "";
+    currError.password = !password.length ? "Please input your password." : "";
+    setFormError(currError);
+
+    if (!currError.email.length && !currError.password.length) {
+      dispatch(login(email, password));
+    }
+  };
 
   return (
-    <div>
-      <Grid container spacing={0} justify="center" direction="row">
-        <Grid item>
-          <Grid
-            container
-            direction="column"
-            justify="center"
-            spacing={2}
-            className="login-form"
-          >
-            <Paper
-              variant="elevation"
-              elevation={2}
-              className="login-background"
+    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Toolbar />
+      <form>
+        <Grid container spacing={1} justifyContent="center" direction="row">
+          <Grid item>
+            <Grid
+              container
+              direction="column"
+              justifyContent="center"
+              spacing={2}
+              className={classes.loginForm}
             >
-              <Grid item>
-                <Typography component="h1" variant="h5">
-                  Sign in
-                </Typography>
-              </Grid>
-              <Grid item>
-                <form onSubmit={handleSubmit} name={name}>
-                  <Grid container direction="column" spacing={2}>
+              <Paper
+                variant="elevation"
+                elevation={2}
+                className={classes.loginBackground}
+              >
+                <Grid item>
+                  <Grid container direction="column" spacing={1}>
+                    {error && error.response && (
+                      <div className={classes.error}>{error.response.data}</div>
+                    )}
+                    <Grid item>
+                      <Typography component="h1" variant="h5">
+                        Sign In
+                      </Typography>
+                    </Grid>
+
                     <Grid item>
                       <TextField
                         type="text"
-                        placeholder="Username"
-                        fullWidth
-                        name="username"
+                        label="email"
+                        placeholder="Email"
                         variant="outlined"
+                        fullWidth
+                        value={email}
+                        onChange={(ev) => {
+                          setEmail(ev.target.value);
+                          setFormError({ ...formError, email: "" });
+                        }}
+                        error={formError.email.length > 0}
+                        helperText={
+                          formError.email.length ? formError.email : " "
+                        }
                         required
                         autoFocus
                       />
@@ -51,9 +110,19 @@ const AuthForm = (props) => {
                     <Grid item>
                       <TextField
                         type="password"
+                        label="password"
                         placeholder="Password"
                         fullWidth
                         name="password"
+                        value={password}
+                        onChange={(ev) => {
+                          setPassword(ev.target.value);
+                          setFormError({ ...formError, password: "" });
+                        }}
+                        error={formError.password.length > 0}
+                        helperText={
+                          formError.password.length ? formError.password : " "
+                        }
                         variant="outlined"
                         required
                       />
@@ -62,28 +131,22 @@ const AuthForm = (props) => {
                       <Button
                         variant="contained"
                         color="primary"
-                        type="submit"
-                        className="button-block"
+                        className={classes.buttonBlock}
+                        onClick={() => {
+                          handleSignIn();
+                        }}
                       >
-                        {displayName}
+                        Sign In
                       </Button>
                     </Grid>
                   </Grid>
-                  {error && error.response && (
-                    <div> {error.response.data} </div>
-                  )}
-                </form>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Forgot Password?
-                </Link>
-              </Grid>
-            </Paper>
+                </Grid>
+              </Paper>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </form>
+    </Box>
   );
 };
-export default AuthForm;
+export default LogIn;

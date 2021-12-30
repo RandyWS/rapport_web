@@ -6,7 +6,8 @@ import {
   AdminRoute,
   GuestRoute,
 } from "./components/ProtectedRoutes";
-import { Login, Signup } from "./components/AuthForm";
+import { Signup } from "./components/AuthForm";
+import LogIn from "./components/LogIn";
 import Home from "./components/Home";
 import NotFound from "./components/NotFound";
 import Calendar from "./components/Calendar";
@@ -88,7 +89,7 @@ const Routes = () => {
           isLoggedIn={loggedIn}
           exact
           path="/login"
-          component={Login}
+          component={LogIn}
         />
         <GuestRoute
           isLoggedIn={loggedIn}

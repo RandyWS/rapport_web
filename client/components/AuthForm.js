@@ -108,11 +108,6 @@ const AuthForm = (props) => {
                   )}
                 </Grid>
               </form>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Forgot Password?
-                </Link>
-              </Grid>
             </Paper>
           </Grid>
         </Grid>
