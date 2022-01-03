@@ -22,7 +22,7 @@ import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
 //other
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-const SingleFriendComms = (props) => {
+const CommTimeline = (props) => {
   const getIcon = (type) => {
     if (type === "phone-call") {
       return <CallIcon />;
@@ -71,6 +71,11 @@ const SingleFriendComms = (props) => {
               <Typography variant="h6" component="span">
                 {comm.title}
               </Typography>
+              {comm.friend ? (
+                <Typography variant="body2" color="text.secondary">
+                  {`${comm.type} with ${comm.friend.firstName} ${comm.friend.lastName}`}
+                </Typography>
+              ) : null}
               <Typography>{comm.content}</Typography>
             </TimelineContent>
           </TimelineItem>
@@ -80,4 +85,4 @@ const SingleFriendComms = (props) => {
   );
 };
 
-export default SingleFriendComms;
+export default CommTimeline;

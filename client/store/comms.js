@@ -6,6 +6,7 @@ const SET_COMM = "SET_COMM";
 const SET_SINGLE_COMM = "SET_SINGLE_COMM";
 const SET_RECURRING = "SET_RECURRING";
 const SET_TIMELINE_COMM = "SET_TIMELINE_COMM";
+const SET_FUTURE_TIMELINE_COMM = "SET_FUTURE_TIMELINE_COMM";
 const SET_SINGLE_FRIEND_COMMS = "SET_SINGLE_FRIEND_COMMS";
 const RESET_COMM = "RESET_COMM";
 const ADD_COMM = "ADD_COMM";
@@ -108,7 +109,7 @@ export const _fetchSingleComm = (commId) => {
             authorization: token,
           },
         });
-        console.log("data returned", data);
+
         if (data) {
           dispatch(setSingleComm(data));
         }
@@ -148,14 +149,27 @@ export const _fetchTimelineComms = () => {
             authorization: token,
           },
         });
+        const response = await axios.get(`/api/comms/future`, {
+          headers: {
+            authorization: token,
+          },
+        });
 
         if (data.length) {
           const communications = data.map((comm) => {
             comm.url = comm.friend.imageUrl;
-            comm.id = comm.friendId;
             return comm;
           });
           dispatch(setTimelineComm(communications));
+        }
+
+        if (response.data.length) {
+          const future = data.map((comm) => {
+            comm.url = comm.friend.imageUrl;
+            s;
+            return comm;
+          });
+          dispatch(setFutureTimelineComm(future));
         }
       }
     } catch (error) {
@@ -266,6 +280,7 @@ const initialState = {
   comms: [],
   singleComm: {},
   timelineComms: [],
+  timelineRecurring: [],
   singleFriendComms: [],
   singleFriendRecurring: [],
 };

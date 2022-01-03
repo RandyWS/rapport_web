@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { _fetchSingleFriend, _fetchRecurring } from "../store";
 import AddOrEditConvo from "./AddOrEditConvo";
 import AddOrEditFriend from "./AddOrEdit";
-import SingleFriendComms from "./SingleFriendComms";
+import CommTimeline from "./CommTimeline";
 import moment from "moment";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -195,13 +195,13 @@ const SingleFriend = (props) => {
       </Box>
 
       {tab === 0 ? (
-        <SingleFriendComms
+        <CommTimeline
           comms={comms}
           setComm={setComm}
           handleCommFormOpen={handleCommFormOpen}
         />
       ) : (
-        <SingleFriendComms
+        <CommTimeline
           comms={futureComms}
           setComm={setComm}
           handleCommFormOpen={handleCommFormOpen}
