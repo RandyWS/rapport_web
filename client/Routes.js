@@ -6,7 +6,7 @@ import {
   AdminRoute,
   GuestRoute,
 } from "./components/ProtectedRoutes";
-import { Signup } from "./components/AuthForm";
+import SignUp from "./components/SignUp";
 import LogIn from "./components/LogIn";
 import Home from "./components/Home";
 import NotFound from "./components/NotFound";
@@ -95,7 +95,7 @@ const Routes = () => {
           isLoggedIn={loggedIn}
           exact
           path="/signup"
-          component={Signup}
+          component={SignUp}
         />
         <Route path="*" component={NotFound}></Route>
       </Switch>
