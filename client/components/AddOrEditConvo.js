@@ -42,7 +42,7 @@ const AddOrEditConvo = (props) => {
   useEffect(() => {
     if (props.comm.id) {
       setTitle(props.comm.title);
-      setContent(props.comm.content);
+      if (props.comm.content) setContent(props.comm.content);
       setType(props.comm.type);
       handleStartChange(props.comm.start);
       handleEndChange(props.comm.end);

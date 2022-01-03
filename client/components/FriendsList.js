@@ -104,7 +104,7 @@ const FriendList = (props) => {
               <Grid item xs={12} sm={5} md={4}>
                 <Box pt={1}>
                   <CardMedia
-                    square
+                    square='true'
                     component="img"
                     sx={{ height: "100%", width: "100%", borderRadius: "10%" }}
                     image={friend.imageUrl}

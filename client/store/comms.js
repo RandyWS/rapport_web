@@ -3,6 +3,7 @@ const TOKEN = "token";
 const token = window.localStorage.getItem(TOKEN);
 
 const SET_COMM = "SET_COMM";
+const SET_SINGLE_COMM = "SET_SINGLE_COMM";
 const SET_RECURRING = "SET_RECURRING";
 const SET_TIMELINE_COMM = "SET_TIMELINE_COMM";
 const SET_SINGLE_FRIEND_COMMS = "SET_SINGLE_FRIEND_COMMS";
@@ -15,6 +16,13 @@ export const setComm = (comm) => {
   return {
     type: SET_COMM,
     comm,
+  };
+};
+
+export const setSingleComm = (singleComm) => {
+  return {
+    type: SET_SINGLE_COMM,
+    singleComm,
   };
 };
 
@@ -80,10 +88,29 @@ export const _fetchComms = () => {
         if (data.length) {
           const communications = data.map((comm) => {
             comm.url = comm.friend.imageUrl;
-            comm.id = comm.friendId;
             return comm;
           });
           dispatch(setComm(communications));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const _fetchSingleComm = (commId) => {
+  return async (dispatch) => {
+    try {
+      if (token) {
+        const { data } = await axios.get(`/api/comms/${commId}`, {
+          headers: {
+            authorization: token,
+          },
+        });
+        console.log("data returned", data);
+        if (data) {
+          dispatch(setSingleComm(data));
         }
       }
     } catch (error) {
@@ -237,6 +264,7 @@ export const _deleteComm = (commId) => {
 
 const initialState = {
   comms: [],
+  singleComm: {},
   timelineComms: [],
   singleFriendComms: [],
   singleFriendRecurring: [],
@@ -246,12 +274,13 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case SET_COMM:
       return { ...state, comms: action.comm };
+    case SET_SINGLE_COMM:
+      return { ...state, singleComm: action.singleComm };
     case SET_SINGLE_FRIEND_COMMS:
       return { ...state, singleFriendComms: action.comms };
     case SET_TIMELINE_COMM:
       return { ...state, timelineComms: action.comm };
     case SET_RECURRING:
-      console.log("reached reducer");
       return { ...state, singleFriendRecurring: action.recurring };
     case RESET_COMM:
       return initialState;
@@ -270,7 +299,22 @@ export default (state = initialState, action) => {
         }
       });
       editedComms.sort((a, b) => (a.start > b.start ? -1 : 1));
-      return { ...state, singleFriendComms: editedComms };
+
+      let editedCalendar = [...state.comms];
+      editedCalendar = editedCalendar.map((comm) => {
+        if (comm.id === action.comm.id) {
+          return { url: comm.url, ...action.comm };
+        } else {
+          return comm;
+        }
+      });
+      editedCalendar.sort((a, b) => (a.start > b.start ? -1 : 1));
+
+      return {
+        ...state,
+        singleFriendComms: editedComms,
+        comms: editedCalendar,
+      };
     case DELETE_COMM:
       let deletedStateCopy = [...state.singleFriendComms];
       if (deletedStateCopy.length) {
@@ -278,7 +322,18 @@ export default (state = initialState, action) => {
           (item) => item.id !== action.commId
         );
       }
-      return { ...state, singleFriendComms: deletedStateCopy };
+
+      let deletedCalendar = [...state.comms];
+      if (deletedCalendar.length) {
+        deletedCalendar = deletedCalendar.filter(
+          (item) => item.id !== action.commId
+        );
+      }
+      return {
+        ...state,
+        singleFriendComms: deletedStateCopy,
+        comms: deletedCalendar,
+      };
 
     default:
       return state;

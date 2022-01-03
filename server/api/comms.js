@@ -86,6 +86,25 @@ router.get("/timeline", authRequired, async (req, res, next) => {
   }
 });
 
+router.get("/:commId", authRequired, async (req, res, next) => {
+  try {
+    if (req.userId) {
+      const singleComm = await Communication.findOne({
+        where: {
+          userId: req.userId,
+          id: req.params.commId,
+        },
+      });
+
+      if (singleComm.id) {
+        res.status(200).json(singleComm);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
