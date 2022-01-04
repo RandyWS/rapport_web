@@ -11,17 +11,21 @@ import { Link } from "react-router-dom";
 import { logout, me } from "../store";
 
 const useStyles = makeStyles((theme) => ({
+  bar: {
+    background: "#e07a5f",
+  },
   navlinks: {
-    marginLeft: theme.spacing(10),
+    marginLeft: theme.spacing(5),
     display: "flex",
   },
   logo: {
     flexGrow: "1",
     cursor: "pointer",
+    color: "#f4f1de",
   },
   link: {
     textDecoration: "none",
-    color: "white",
+    color: "#f4f1de",
     fontSize: "20px",
     marginLeft: theme.spacing(20),
     "&:hover": {
@@ -47,7 +51,7 @@ function Navbar() {
   return (
     <AppBar position="static">
       <CssBaseline />
-      <Toolbar>
+      <Toolbar className={classes.bar}>
         <Typography variant="h4" className={classes.logo}>
           Rapport
         </Typography>

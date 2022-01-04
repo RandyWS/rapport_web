@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { _fetchFriends } from "../store";
 import AddOrEditFriend from "./AddOrEdit";
+import moment from "moment";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
@@ -13,12 +14,15 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@mui/material/Typography";
 
 const useStyles = makeStyles((theme) => ({
+  background: {
+    backgroundColor: "#edf6f9",
+  },
   featCard: {
     maxWidth: "100%",
     border: "none",
     boxShadow: "none",
     alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#edf6f9",
   },
   featText: {
     fontFamily: "New York Extra Large",
@@ -44,26 +48,6 @@ const FriendList = (props) => {
     props.history.push(route);
   };
 
-  const getIcon = (type) => {
-    if (type === "phone-call") {
-      return <CallIcon />;
-    } else if (type === "text") {
-      return <TextsmsIcon />;
-    } else if (type === "in-person") {
-      return <ConnectWithoutContactIcon />;
-    } else if (type === "social-media") {
-      return <InstagramIcon />;
-    } else if (type === "email") {
-      return <AlternateEmailIcon />;
-    } else if (type === "letter") {
-      return <MarkunreadMailboxIcon />;
-    } else if (type === "other") {
-      return <MoreHorizIcon />;
-    } else if (type === "future") {
-      return <UpdateIcon />;
-    }
-  };
-
   const handleFriendFormOpen = () => {
     setFriendOpen(true);
   };
@@ -73,7 +57,11 @@ const FriendList = (props) => {
   };
 
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+    <Box
+      component="main"
+      className={classes.background}
+      sx={{ flexGrow: 1, p: 3 }}
+    >
       <Toolbar />
 
       <Stack spacing={2} direction="row">
@@ -91,20 +79,20 @@ const FriendList = (props) => {
         handleFormClose={handleFriendFormClose}
       />
 
-      <Grid container justifyContent="center" alignItems="center">
+      <Grid container alignItems="center">
         {friends.map((friend) => {
           return (
             <Grid
               container
-              justifyContent="center"
               alignItems="center"
               onClick={() => clickHandler(friend.id)}
               key={friend.id}
+              spacing={1}
             >
-              <Grid item xs={12} sm={5} md={4}>
+              <Grid item xs={12} sm={3} md={2}>
                 <Box pt={1}>
                   <CardMedia
-                    square='true'
+                    square="true"
                     component="img"
                     sx={{ height: "100%", width: "100%", borderRadius: "10%" }}
                     image={friend.imageUrl}
@@ -112,7 +100,7 @@ const FriendList = (props) => {
                   />
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={7} md={8}>
+              <Grid item xs={12} sm={7} md={10}>
                 <Box
                   m={1}
                   sx={{
@@ -125,15 +113,15 @@ const FriendList = (props) => {
                   <Box pt={1} m={2}>
                     <Typography
                       gutterBottom
-                      variant="h3"
+                      variant="h5"
                       className={classes.featText}
-                      component="h3"
+                      component="p"
                     >
                       {friend.firstName} {friend.lastName}
                     </Typography>
                     {friend.nickname ? (
                       <Typography
-                        variant="h5"
+                        variant="h6"
                         color="textSecondary"
                         component="p"
                         className={classes.featSubtitle}
@@ -146,7 +134,7 @@ const FriendList = (props) => {
                       component="div"
                       variant="body1"
                       sx={{
-                        fontSize: "1.6rem",
+                        fontSize: "1.2rem",
                       }}
                     >
                       {friend.description}
@@ -158,7 +146,8 @@ const FriendList = (props) => {
                       className={classes.featSubtitle}
                       sx={{ fontStyle: "italic" }}
                     >
-                      Rapport Since: {friend.createdAt}
+                      Rapport Since:{" "}
+                      {moment(friend.createdAt).format("MMMM Do YYYY")}
                     </Typography>
                   </Box>
                 </Box>

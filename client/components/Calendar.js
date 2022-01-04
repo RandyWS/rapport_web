@@ -12,8 +12,12 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
 
 const useStyles = makeStyles((theme) => ({
+  background: {
+    backgroundColor: "#edf6f9",
+  },
   Media: {
     height: "100%",
     width: "100%",
@@ -61,7 +65,7 @@ const Calendar = (props) => {
             />
           </Box>
         </Grid>
-        <Grid item xs={12} sm={7} md={5}>
+        <Grid item xs={12} sm={7} md={9}>
           <Box
             sx={{
               display: "flex",
@@ -82,7 +86,11 @@ const Calendar = (props) => {
   }
 
   return (
-    <>
+    <Box
+      component="main"
+      className={classes.background}
+      sx={{ flexGrow: 1, p: 3 }}
+    >
       <AddOrEditConvo
         open={commOpen}
         handleFormClose={handleCommFormClose}
@@ -99,7 +107,7 @@ const Calendar = (props) => {
         events={comms}
         eventContent={renderEventContent}
       />
-    </>
+    </Box>
   );
 };
 

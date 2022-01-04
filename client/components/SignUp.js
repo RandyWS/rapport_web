@@ -4,23 +4,34 @@ import { signup } from "../store";
 import {
   Button,
   Box,
-  Toolbar,
   TextField,
   Grid,
   Paper,
-  Typography,
   makeStyles,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  loginForm: {
+  form: {
+    display: "flex",
     justifyContent: "center",
+    alignItems: "center",
   },
   buttonBlock: {
-    width: "100%",
+    "&.MuiButton-root": {
+      border: ".1px #edf6f9 solid",
+    },
+    "&.MuiButton-text": {
+      color: "blue",
+    },
+    "&.MuiButton-contained": {
+      color: "#edf6f9",
+      backgroundColor: "#83c5be",
+    },
   },
   loginBackground: {
+    display: "flex",
     justifyContent: "center",
+    alignItems: "center",
     minHeight: "30vh",
     padding: "50px",
   },
@@ -71,132 +82,115 @@ const SignUp = (props) => {
   };
 
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-      <Toolbar />
-      <form>
-        <Grid container spacing={1} justifyContent="center" direction="row">
-          <Grid item>
-            <Grid
-              container
-              direction="column"
-              justifyContent="center"
-              spacing={2}
-              className={classes.loginForm}
-            >
-              <Paper
-                variant="elevation"
-                elevation={2}
-                className={classes.loginBackground}
-              >
-                <Grid item>
-                  <Grid container direction="column" spacing={1}>
-                    {error && error.response && (
-                      <div className={classes.error}>{error.response.data}</div>
-                    )}
-                    <Grid item>
-                      <Typography component="h1" variant="h5">
-                        Sign Up
-                      </Typography>
-                    </Grid>
+    <Box
+      component="main"
+      justifyContent="center"
+      alignItems="center"
+      sx={{
+        flexGrow: 1,
+        backgroundColor: "#edf6f9",
+        height: "90vh",
+        display: "flex",
+      }}
+    >
+      <form className={classes.form}>
+        <Paper
+          variant="elevation"
+          elevation={2}
+          className={classes.loginBackground}
+        >
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {error && error.response && (
+              <div className={classes.error}>{error.response.data}</div>
+            )}
 
-                    <Grid item>
-                      <TextField
-                        type="text"
-                        label="first name"
-                        placeholder="first name"
-                        variant="outlined"
-                        fullWidth
-                        value={first}
-                        onChange={(ev) => {
-                          setFirst(ev.target.value);
-                          setFormError({ ...formError, first: "" });
-                        }}
-                        error={formError.first.length > 0}
-                        helperText={
-                          formError.first.length ? formError.first : " "
-                        }
-                        required
-                        autoFocus
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        type="text"
-                        label="last name"
-                        placeholder="last name"
-                        variant="outlined"
-                        fullWidth
-                        value={last}
-                        onChange={(ev) => {
-                          setLast(ev.target.value);
-                          setFormError({ ...formError, last: "" });
-                        }}
-                        error={formError.last.length > 0}
-                        helperText={
-                          formError.last.length ? formError.last : " "
-                        }
-                        required
-                        autoFocus
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        type="text"
-                        label="email"
-                        placeholder="Email"
-                        variant="outlined"
-                        fullWidth
-                        value={email}
-                        onChange={(ev) => {
-                          setEmail(ev.target.value);
-                          setFormError({ ...formError, email: "" });
-                        }}
-                        error={formError.email.length > 0}
-                        helperText={
-                          formError.email.length ? formError.email : " "
-                        }
-                        required
-                        autoFocus
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        type="password"
-                        label="password"
-                        placeholder="Password"
-                        fullWidth
-                        name="password"
-                        value={password}
-                        onChange={(ev) => {
-                          setPassword(ev.target.value);
-                          setFormError({ ...formError, password: "" });
-                        }}
-                        error={formError.password.length > 0}
-                        helperText={
-                          formError.password.length ? formError.password : " "
-                        }
-                        variant="outlined"
-                        required
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.buttonBlock}
-                        onClick={() => {
-                          handleSignUp();
-                        }}
-                      >
-                        Sign Up
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Paper>
+            <Grid item>
+              <TextField
+                type="text"
+                label="first name"
+                placeholder="first name"
+                variant="outlined"
+                fullWidth
+                value={first}
+                onChange={(ev) => {
+                  setFirst(ev.target.value);
+                  setFormError({ ...formError, first: "" });
+                }}
+                error={formError.first.length > 0}
+                helperText={formError.first.length ? formError.first : " "}
+                required
+                autoFocus
+              />
+              <TextField
+                type="text"
+                label="last name"
+                placeholder="last name"
+                variant="outlined"
+                fullWidth
+                value={last}
+                onChange={(ev) => {
+                  setLast(ev.target.value);
+                  setFormError({ ...formError, last: "" });
+                }}
+                error={formError.last.length > 0}
+                helperText={formError.last.length ? formError.last : " "}
+                required
+                autoFocus
+              />
+              <TextField
+                type="text"
+                label="email"
+                placeholder="Email"
+                variant="outlined"
+                fullWidth
+                value={email}
+                onChange={(ev) => {
+                  setEmail(ev.target.value);
+                  setFormError({ ...formError, email: "" });
+                }}
+                error={formError.email.length > 0}
+                helperText={formError.email.length ? formError.email : " "}
+                required
+                autoFocus
+              />
+              <TextField
+                type="password"
+                label="password"
+                placeholder="Password"
+                fullWidth
+                name="password"
+                value={password}
+                onChange={(ev) => {
+                  setPassword(ev.target.value);
+                  setFormError({ ...formError, password: "" });
+                }}
+                error={formError.password.length > 0}
+                helperText={
+                  formError.password.length ? formError.password : " "
+                }
+                variant="outlined"
+                required
+              />
+            </Grid>
+
+            <Grid item>
+              <Button
+                variant="contained"
+                className={classes.buttonBlock}
+                onClick={() => {
+                  handleSignUp();
+                }}
+              >
+                Sign Up
+              </Button>
             </Grid>
           </Grid>
-        </Grid>
+        </Paper>
       </form>
     </Box>
   );

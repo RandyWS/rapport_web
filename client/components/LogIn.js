@@ -4,7 +4,6 @@ import { login } from "../store";
 import {
   Button,
   Box,
-  Toolbar,
   TextField,
   Grid,
   Paper,
@@ -13,16 +12,31 @@ import {
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  loginForm: {
+  form: {
+    display: "flex",
     justifyContent: "center",
+    alignItems: "center",
   },
+
   buttonBlock: {
-    width: "100%",
+    "&.MuiButton-root": {
+      border: ".1px #edf6f9 solid",
+    },
+    "&.MuiButton-text": {
+      color: "blue",
+    },
+    "&.MuiButton-contained": {
+      color: "#edf6f9",
+      backgroundColor: "#83c5be",
+    },
   },
+
   loginBackground: {
+    display: "flex",
     justifyContent: "center",
+    alignItems: "center",
     minHeight: "30vh",
-    padding: "50px",
+    padding: "60px",
   },
   error: {
     color: "red",
@@ -59,92 +73,85 @@ const LogIn = (props) => {
   };
 
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-      <Toolbar />
-      <form>
-        <Grid container spacing={1} justifyContent="center" direction="row">
-          <Grid item>
-            <Grid
-              container
-              direction="column"
-              justifyContent="center"
-              spacing={2}
-              className={classes.loginForm}
-            >
-              <Paper
-                variant="elevation"
-                elevation={2}
-                className={classes.loginBackground}
-              >
-                <Grid item>
-                  <Grid container direction="column" spacing={1}>
-                    {error && error.response && (
-                      <div className={classes.error}>{error.response.data}</div>
-                    )}
-                    <Grid item>
-                      <Typography component="h1" variant="h5">
-                        Sign In
-                      </Typography>
-                    </Grid>
+    <Box
+      component="main"
+      justifyContent="center"
+      alignItems="center"
+      sx={{
+        flexGrow: 1,
+        backgroundColor: "#edf6f9",
+        height: "90vh",
+        display: "flex",
+      }}
+    >
+      <form className={classes.form}>
+        <Paper
+          variant="elevation"
+          elevation={2}
+          className={classes.loginBackground}
+        >
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {error && error.response && (
+              <div className={classes.error}>{error.response.data}</div>
+            )}
 
-                    <Grid item>
-                      <TextField
-                        type="text"
-                        label="email"
-                        placeholder="Email"
-                        variant="outlined"
-                        fullWidth
-                        value={email}
-                        onChange={(ev) => {
-                          setEmail(ev.target.value);
-                          setFormError({ ...formError, email: "" });
-                        }}
-                        error={formError.email.length > 0}
-                        helperText={
-                          formError.email.length ? formError.email : " "
-                        }
-                        required
-                        autoFocus
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        type="password"
-                        label="password"
-                        placeholder="Password"
-                        fullWidth
-                        name="password"
-                        value={password}
-                        onChange={(ev) => {
-                          setPassword(ev.target.value);
-                          setFormError({ ...formError, password: "" });
-                        }}
-                        error={formError.password.length > 0}
-                        helperText={
-                          formError.password.length ? formError.password : " "
-                        }
-                        variant="outlined"
-                        required
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.buttonBlock}
-                        onClick={() => {
-                          handleSignIn();
-                        }}
-                      >
-                        Sign In
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Paper>
+            <Grid item>
+              <TextField
+                type="text"
+                label="email"
+                placeholder="Email"
+                variant="outlined"
+                fullWidth
+                value={email}
+                onChange={(ev) => {
+                  setEmail(ev.target.value);
+                  setFormError({ ...formError, email: "" });
+                }}
+                error={formError.email.length > 0}
+                helperText={formError.email.length ? formError.email : " "}
+                required
+                autoFocus
+                className={classes.input}
+              />
+              <TextField
+                type="password"
+                label="password"
+                placeholder="Password"
+                fullWidth
+                name="password"
+                value={password}
+                onChange={(ev) => {
+                  setPassword(ev.target.value);
+                  setFormError({ ...formError, password: "" });
+                }}
+                error={formError.password.length > 0}
+                helperText={
+                  formError.password.length ? formError.password : " "
+                }
+                variant="outlined"
+                required
+                className={classes.input}
+              />
+            </Grid>
+
+            <Grid item>
+              <Button
+                variant="contained"
+                className={classes.buttonBlock}
+                onClick={() => {
+                  handleSignIn();
+                }}
+              >
+                Sign In
+              </Button>
             </Grid>
           </Grid>
-        </Grid>
+        </Paper>
       </form>
     </Box>
   );
