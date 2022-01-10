@@ -16,6 +16,7 @@ import FriendsList from "./components/FriendsList";
 import SingleFriend from "./components/SingleFriend";
 import AddOrEditFriend from "./components/AddOrEditFriend";
 import AddOrEditConvo from "./components/AddOrEditConvo";
+import SingleConvo from "./components/SingleConvo"
 import { me } from "./store";
 
 /**
@@ -78,6 +79,12 @@ const Routes = () => {
           exact
           path="/conversation/add"
           component={AddOrEditConvo}
+        />
+        <LoggedInRoute
+          isLoggedIn={loggedIn}
+          exact
+          path="/conversation/:convoId"
+          component={SingleConvo}
         />
         <LoggedInRoute
           isLoggedIn={loggedIn}
