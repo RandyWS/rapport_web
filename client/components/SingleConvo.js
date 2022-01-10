@@ -3,17 +3,11 @@ import { useDispatch } from "react-redux";
 import { _createComm, _editComm, _deleteComm, setFriends } from "../store";
 
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DateAdapter from "@mui/lab/AdapterMoment";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import FormControl from "@mui/material/FormControl";
-import MenuItem from "@mui/material/MenuItem";
 
 //icons
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -24,6 +18,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import AddOrEditConvo from "./AddOrEditConvo";
 
 const SingleConvo = (props) => {
   const dispatch = useDispatch();
@@ -31,11 +26,6 @@ const SingleConvo = (props) => {
   const [content, setContent] = useState("");
   const [type, setType] = useState("other");
   const [friend, setFriend] = useState("")
-  const [error, setError] = useState({
-    title: "",
-    time: "",
-    type: "",
-  });
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
@@ -80,8 +70,7 @@ const SingleConvo = (props) => {
 
   return (
     <Dialog open={props.open} onClose={() => props.handleFormClose()}>
-      {!deleteOpen ? (
-        <>
+
           <DialogTitle>
             {title} with {friend}
           </DialogTitle>
@@ -100,6 +89,11 @@ const SingleConvo = (props) => {
             >
               Cancel
             </Button>
+            <AddOrEditConvo
+                open={commOpen}
+                handleFormClose={handleCommFormClose}
+                comm={comm}
+            />
             <Button onClick={() => addOrEdit()}>
               {props.comm.id ? "Edit" : "Add"}
             </Button>
@@ -109,31 +103,6 @@ const SingleConvo = (props) => {
               </Button>
             ) : null}
           </DialogActions>
-        </>
-      ) : (
-        <>
-          <DialogTitle>Delete Conversation</DialogTitle>
-          <DialogContent>
-            <DialogContentText
-              sx={{ textAlign: "center", fontSize: "large", color: "black" }}
-            >
-              Are you sure you would like to delete this communication?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions sx={{ justifyContent: "center", color: "warning" }}>
-            <Button
-              onClick={() => {
-                setDeleteOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button color="warning" onClick={() => deleteComm()}>
-              Delete
-            </Button>
-          </DialogActions>
-        </>
-      )}
     </Dialog>
   );
 };
