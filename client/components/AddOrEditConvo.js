@@ -102,7 +102,7 @@ const AddOrEditConvo = (props) => {
       if (props.comm.id) {
         dispatch(
           _editComm({
-            friendId: props.friendId,
+            friendId: props.friend.id,
             commId: props.comm.id,
             title,
             content,
@@ -114,7 +114,7 @@ const AddOrEditConvo = (props) => {
       } else {
         dispatch(
           _createComm({
-            friendId: props.friendId,
+            friendId: props.friend.id,
             title,
             content,
             type,

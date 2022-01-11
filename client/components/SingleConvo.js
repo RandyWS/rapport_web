@@ -70,11 +70,13 @@ const SingleConvo = (props) => {
     }
   };
   const handleEditFormOpen = () => {
+    console.log(props.comm.friend)
     setEditOpen(true);
   };
 
   const handleEditFormClose = () => {
     setEditOpen(false);
+    props.handleFormClose()
   };
   return (
     <Dialog open={props.open} onClose={() => props.handleFormClose()}>
@@ -114,7 +116,7 @@ const SingleConvo = (props) => {
             open={editOpen}
             handleFormClose={props.handleFormClose}
             handleEditClose={handleEditFormClose}
-            friendId={props.comm.friend}
+            friend={props.comm.friend}
             comm={props.comm}
           />
     </Dialog>
