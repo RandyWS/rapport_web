@@ -102,7 +102,7 @@ const AddOrEditConvo = (props) => {
       if (props.comm.id) {
         dispatch(
           _editComm({
-            friendId: props.friendId,
+            friendId: props.friend.id,
             commId: props.comm.id,
             title,
             content,
@@ -114,7 +114,7 @@ const AddOrEditConvo = (props) => {
       } else {
         dispatch(
           _createComm({
-            friendId: props.friendId,
+            friendId: props.friend.id,
             title,
             content,
             type,
@@ -123,7 +123,7 @@ const AddOrEditConvo = (props) => {
           })
         );
       }
-      props.handleFormClose();
+      props.handleEditClose()
       clearForm();
     }
   };
@@ -143,7 +143,7 @@ const AddOrEditConvo = (props) => {
   };
 
   return (
-    <Dialog open={props.open} onClose={() => props.handleFormClose()}>
+    <Dialog open={props.open} onClose={() => props.handleEditClose()}>
       {!deleteOpen ? (
         <>
           <DialogTitle>
@@ -222,7 +222,7 @@ const AddOrEditConvo = (props) => {
           <DialogActions>
             <Button
               onClick={() => {
-                props.handleFormClose();
+                props.handleEditClose();
                 clearForm();
               }}
             >
