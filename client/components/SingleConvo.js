@@ -106,11 +106,6 @@ const SingleConvo = (props) => {
             >
               Edit
             </Button>
-            {props.comm.id ? (
-              <Button color="warning" onClick={() => setDeleteOpen(true)}>
-                Delete
-              </Button>
-            ) : null}
           </DialogActions>
           <AddOrEditConvo
             open={editOpen}
