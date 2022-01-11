@@ -123,7 +123,7 @@ const AddOrEditConvo = (props) => {
           })
         );
       }
-      props.handleFormClose();
+      props.handleEditClose()
       clearForm();
     }
   };
@@ -143,7 +143,7 @@ const AddOrEditConvo = (props) => {
   };
 
   return (
-    <Dialog open={props.open} onClose={() => props.handleFormClose()}>
+    <Dialog open={props.open} onClose={() => props.handleEditClose()}>
       {!deleteOpen ? (
         <>
           <DialogTitle>
@@ -222,7 +222,7 @@ const AddOrEditConvo = (props) => {
           <DialogActions>
             <Button
               onClick={() => {
-                props.handleFormClose();
+                props.handleEditClose();
                 clearForm();
               }}
             >

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { _createComm, _editComm, _deleteComm, setFriends } from "../store";
+import { _createComm, _editComm, _deleteComm } from "../store";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -27,6 +27,8 @@ const SingleConvo = (props) => {
   const [type, setType] = useState("other");
   const [friend, setFriend] = useState("")
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+
 
   useEffect(() => {
     if (props.comm.id) {
@@ -67,7 +69,13 @@ const SingleConvo = (props) => {
       return <UpdateIcon color="primary" />;
     }
   };
+  const handleEditFormOpen = () => {
+    setEditOpen(true);
+  };
 
+  const handleEditFormClose = () => {
+    setEditOpen(false);
+  };
   return (
     <Dialog open={props.open} onClose={() => props.handleFormClose()}>
 
@@ -89,13 +97,12 @@ const SingleConvo = (props) => {
             >
               Cancel
             </Button>
-            <AddOrEditConvo
-                open={commOpen}
-                handleFormClose={handleCommFormClose}
-                comm={comm}
-            />
-            <Button onClick={() => addOrEdit()}>
-              {props.comm.id ? "Edit" : "Add"}
+            <Button
+              onClick={() => {
+                handleEditFormOpen();
+              }}
+            >
+              Edit
             </Button>
             {props.comm.id ? (
               <Button color="warning" onClick={() => setDeleteOpen(true)}>
@@ -103,7 +110,15 @@ const SingleConvo = (props) => {
               </Button>
             ) : null}
           </DialogActions>
+          <AddOrEditConvo
+            open={editOpen}
+            handleFormClose={props.handleFormClose}
+            handleEditClose={handleEditFormClose}
+            friendId={props.comm.friend}
+            comm={props.comm}
+          />
     </Dialog>
+
   );
 };
 

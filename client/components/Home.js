@@ -56,6 +56,7 @@ const Home = (props) => {
       <SingleConvo
         open={commOpen}
         handleFormClose={handleCommFormClose}
+        handleCommFormOpen={handleCommFormOpen}
         comm={comm}
       />
 
