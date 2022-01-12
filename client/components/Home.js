@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { _fetchTimelineComms, _fetchComms, _fetchSingleComm } from "../store";
+import { _fetchComms, _fetchSingleComm } from "../store";
 import CommTimeline from "./CommTimeline";
 
 import Box from "@mui/material/Box";

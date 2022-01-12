@@ -54,38 +54,6 @@ router.get("/", authRequired, async (req, res, next) => {
   }
 });
 
-router.get("/timeline", authRequired, async (req, res, next) => {
-  try {
-    if (req.userId) {
-      const comm = await Communication.findAll({
-        where: {
-          userId: req.userId,
-          type: {
-            [Sequelize.Op.not]: "future",
-          },
-        },
-        order: [["start", "DESC"]],
-        include: {
-          model: Friend,
-        },
-      });
-
-      if (comm.length) {
-        const formattedComms = comm.map((comm) => {
-          const start = moment(comm.start).format("YYYY-MM-DD hh:mm");
-          const end = moment(comm.end).format("YYYY-MM-DD hh:mm");
-
-          return comm;
-        });
-
-        res.status(200).json(formattedComms);
-      }
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
 router.get("/:commId", authRequired, async (req, res, next) => {
   try {
     if (req.userId) {
