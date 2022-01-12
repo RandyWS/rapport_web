@@ -5,8 +5,6 @@ const token = window.localStorage.getItem(TOKEN);
 const SET_COMM = "SET_COMM";
 const SET_SINGLE_COMM = "SET_SINGLE_COMM";
 const SET_RECURRING = "SET_RECURRING";
-const SET_TIMELINE_COMM = "SET_TIMELINE_COMM";
-const SET_FUTURE_TIMELINE_COMM = "SET_FUTURE_TIMELINE_COMM";
 const SET_SINGLE_FRIEND_COMMS = "SET_SINGLE_FRIEND_COMMS";
 const RESET_COMM = "RESET_COMM";
 const ADD_COMM = "ADD_COMM";
@@ -24,13 +22,6 @@ export const setSingleComm = (singleComm) => {
   return {
     type: SET_SINGLE_COMM,
     singleComm,
-  };
-};
-
-export const setTimelineComm = (comm) => {
-  return {
-    type: SET_TIMELINE_COMM,
-    comm,
   };
 };
 
@@ -140,44 +131,6 @@ export const _fetchRecurring = (friendId) => {
   };
 };
 
-export const _fetchTimelineComms = () => {
-  return async (dispatch) => {
-    try {
-      if (token) {
-        const { data } = await axios.get(`/api/comms/timeline`, {
-          headers: {
-            authorization: token,
-          },
-        });
-        const response = await axios.get(`/api/comms/future`, {
-          headers: {
-            authorization: token,
-          },
-        });
-
-        if (data.length) {
-          const communications = data.map((comm) => {
-            comm.url = comm.friend.imageUrl;
-            return comm;
-          });
-          dispatch(setTimelineComm(communications));
-        }
-
-        if (response.data.length) {
-          const future = data.map((comm) => {
-            comm.url = comm.friend.imageUrl;
-            s;
-            return comm;
-          });
-          dispatch(setFutureTimelineComm(future));
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
 export const _createRecurringComm = (comm, friendId, imageUrl) => {
   return async (dispatch) => {
     try {
@@ -279,8 +232,6 @@ export const _deleteComm = (commId) => {
 const initialState = {
   comms: [],
   singleComm: {},
-  timelineComms: [],
-  timelineRecurring: [],
   singleFriendComms: [],
   singleFriendRecurring: [],
 };
@@ -293,8 +244,6 @@ export default (state = initialState, action) => {
       return { ...state, singleComm: action.singleComm };
     case SET_SINGLE_FRIEND_COMMS:
       return { ...state, singleFriendComms: action.comms };
-    case SET_TIMELINE_COMM:
-      return { ...state, timelineComms: action.comm };
     case SET_RECURRING:
       return { ...state, singleFriendRecurring: action.recurring };
     case RESET_COMM:
